@@ -1,4 +1,6 @@
 import FilmsPresenter from './presenter/films-presenter.js';
+import FilmsModel from './model/films-model.js';
+import CommentsModel from './model/comments-model.js';
 
 const siteHeaderContainer = document.querySelector('.header');
 const siteMainContainer = document.querySelector('.main');
@@ -10,7 +12,9 @@ const Containers = {
   footer: siteFooterContainer,
 };
 
-const filmsPresenter = new FilmsPresenter(Containers);
+const filmsModel = new FilmsModel();
+const commentsModel = new CommentsModel();
+const filmsPresenter = new FilmsPresenter(Containers, filmsModel, commentsModel);
 
 filmsPresenter.renderHeader();
 filmsPresenter.renderContent();
