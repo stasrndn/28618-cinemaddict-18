@@ -1,5 +1,4 @@
 import {getRandomInteger} from '../utils.js';
-import {faker} from '@faker-js/faker';
 
 const emotions = [
   'smile',
@@ -83,7 +82,7 @@ const generateComments = () => {
  * Генерирует случайную дату в диапазоне
  * @returns {Date}
  */
-const generateDate = () => faker.date.between('2017-01-01T00:00:00.000Z', '2022-09-01T00:00:00.000Z');
+const generateDate = () => '';
 
 export const generateComment = () => ({
   id: generateId.getNext(),
