@@ -1,5 +1,5 @@
-import {getRandomFloat, getRandomInteger} from '../utils.js';
-import {MAX_COMMENTS_COUNT, MAX_FILM_COMMENT_COUNT} from '../const';
+import {getRandomFloat, getRandomInteger, generateId} from '../utils.js';
+import {MAX_COMMENTS_COUNT, MAX_FILM_COMMENT_COUNT} from '../const.js';
 
 const TotalRating = {
   MIN: 0.1,
@@ -134,129 +134,10 @@ const descriptions = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. C
   'Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.';
 
 /**
- * Генерирует id фильма
- * @type {{getNext(): number}}
- */
-const generateId = (() => {
-  let id = 0;
-
-  return {
-    getNext() {
-      id++;
-      return id;
-    }
-  };
-})();
-
-/**
- * Возвращает заголовки фильма по id
- * @returns {{alternativeTitle: string, title: string}}
- */
-const generateTitles = (id) => {
-  const index = --id;
-
-  return {
-    title: titles[index],
-    alternativeTitle: alternativeTitles[index],
-  };
-};
-
-/**
- * Возвращает режиссёра фильма по id
- * @param id
- * @returns {string}
- */
-const generateDirector = (id) => {
-  const index = --id;
-
-  return directors[index];
-};
-
-/**
- * Возвращает сценаристов фильма по id фильма
- * @param id
- * @returns {string[]}
- */
-const generateWriters = (id) => {
-  const index = --id;
-
-  return writers[index];
-};
-
-/**
- * Возвращает актёров фильма по id фильма
- * @param id
- * @returns {string[]}
- */
-const generateActors = (id) => {
-  const index = --id;
-
-  return actors[index];
-};
-
-/**
- * Возвращает жанр фильма по id фильма
- * @param id
- * @returns {string}
- */
-const generateGenre = (id) => {
-  const index = --id;
-
-  return genres[index];
-};
-
-/**
- * Возвращает продолжительность фильма по id фильма
- * @param id
- * @returns {string}
- */
-const generateRuntime = (id) => {
-  const index = --id;
-
-  return runtimes[index];
-};
-
-/**
  * Генерирует рандомный постер
  * @returns {string}
  */
-const generatePoster = (id) => {
-  const index = --id;
-  return (posters[index].length ? `./images/posters/${posters[index]}` : '');
-};
-
-/**
- * Генерирует рандомный рейтинг
- * @returns {number}
- */
-const generateTotalRating = () => {
-  const minTotalRating = TotalRating.MIN;
-  const maxTotalRating = TotalRating.MAX;
-
-  return getRandomFloat(minTotalRating, maxTotalRating);
-};
-
-/**
- * Генерирует дату и страну релиза фильма
- * @param id
- * @returns {{date: string, releaseCountry: string}}
- */
-const generateReleaseInfo = (id) => {
-  const index = --id;
-
-  return releases[index];
-};
-
-/**
- * Генерирует рандомный возрастной рейтинг
- * @returns {number}
- */
-const generateAgeRating = () => {
-  const minAgeRating = AgeRating.MIN;
-  const maxAgeRating = AgeRating.MAX;
-
-  return getRandomInteger(minAgeRating, maxAgeRating);
-};
+const generatePoster = (index) => (posters[index].length ? `./images/posters/${posters[index]}` : '');
 
 /**
  * Генерирует описание к фильму из случайного количества предложений
@@ -271,43 +152,39 @@ const generateDescription = () => {
 
 /**
  * Генерирует случайный набор id комментариев
- * @returns {*[]}
+ * @returns {[]}
  */
-const generateComments = () => {
-  const comments = [];
-  const randomCount = getRandomInteger(1, MAX_FILM_COMMENT_COUNT);
-  for (let i = 0; i < randomCount; i++) {
-    const randomId = getRandomInteger(1, MAX_COMMENTS_COUNT);
+const generateCommentsId = (comments) => {
+  const result = [];
+  const randomNumberComments = getRandomInteger(1, MAX_FILM_COMMENT_COUNT);
 
-    if (!comments.includes(randomId)) {
-      comments.push(randomId);
+  for (let i = 0; i < randomNumberComments; i++) {
+    const randomIndexComment = getRandomInteger(0, MAX_COMMENTS_COUNT - 1);
+    const commentId = comments[randomIndexComment].id;
+
+    if (!result.includes(commentId)) {
+      result.push(commentId);
     }
   }
 
-  return comments;
+  return result;
 };
 
-export const generateFilm = () => {
-
-  const id = generateId.getNext();
-  const {title, alternativeTitle} = generateTitles(id);
-
-  return {
-    id: id,
-    comments: generateComments(),
-    filmInfo: {
-      title,
-      alternativeTitle,
-      totalRating: generateTotalRating(),
-      poster: generatePoster(id),
-      ageRating: generateAgeRating(),
-      director: generateDirector(id),
-      writers: generateWriters(id),
-      actors: generateActors(id),
-      release: generateReleaseInfo(id),
-      runtime: generateRuntime(id),
-      genre: generateGenre(id),
-      description: generateDescription(),
-    },
-  };
-};
+export const generateFilm = (comments, _, index) => ({
+  id: generateId(),
+  comments: generateCommentsId(comments),
+  filmInfo: {
+    title: titles[index],
+    alternativeTitle: alternativeTitles[index],
+    totalRating: getRandomFloat(TotalRating.MIN, TotalRating.MAX),
+    poster: generatePoster(index),
+    ageRating: getRandomInteger(AgeRating.MIN, AgeRating.MAX),
+    director: directors[index],
+    writers: writers[index],
+    actors: actors[index],
+    release: releases[index],
+    runtime: runtimes[index],
+    genre: genres[index],
+    description: generateDescription(),
+  },
+});

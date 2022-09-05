@@ -1,4 +1,4 @@
-import {getRandomInteger, generateId} from '../utils.js';
+import {getRandomElementFromArray, generateId} from '../utils.js';
 import dayjs from 'dayjs';
 import dayjsRandom from 'dayjs-random';
 import {MAX_PAST_COMMENT_YEAR} from '../const.js';
@@ -37,17 +37,6 @@ const comments = [
   'Quia aut iste recusandae.',
   'Porro dolor unde ut vel veritatis dolore non ipsa.',
 ];
-
-/**
- * Выбирает случайный элемент массива
- * @param array
- * @returns {*}
- */
-const getRandomElementFromArray = (array) => {
-  const randomIndex = getRandomInteger(0, array.length - 1);
-
-  return array[randomIndex];
-};
 
 /**
  * Генерирует случайную дату в диапазоне

@@ -46,7 +46,19 @@ const generateId = (alphabet = '1234567890', size = 10) => {
   return nanoid();
 };
 
+/**
+ * Выбирает случайный элемент массива
+ * @param array
+ * @returns {*}
+ */
+const getRandomElementFromArray = (array) => {
+  const randomIndex = getRandomInteger(0, array.length - 1);
+
+  return array[randomIndex];
+};
+
 export {
+  getRandomElementFromArray,
   getRandomInteger,
   getRandomFloat,
   isEscapeKey,

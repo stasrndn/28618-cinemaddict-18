@@ -7,9 +7,9 @@ import FilmsListTitleView from '../view/films-list-title-view.js';
 import FilmCardView from '../view/film-card-view.js';
 import FilmsListShowMoreButtonView from '../view/films-list-show-more-button-view.js';
 import FooterStatisticsView from '../view/footer-statistics-view.js';
-import { render, RenderPosition } from '../render.js';
 import FilmDetailsView from '../view/film-details-view';
 import {isEscapeKey} from '../utils.js';
+import { render, RenderPosition } from '../render.js';
 
 export default class FilmsPresenter {
   constructor(containers, filmsModel, commentsModel) {
@@ -87,7 +87,7 @@ export default class FilmsPresenter {
 
         this.#removeNode(filmCardDetail);
 
-        const film = this.films[evt.currentTarget.dataset.id - 1];
+        const film = this.filmsModel.getFilmById(evt.currentTarget.dataset.id);
 
         const filmDetail = new FilmDetailsView(film, this.comments);
 

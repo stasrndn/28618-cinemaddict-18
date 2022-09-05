@@ -12,14 +12,10 @@ const Containers = {
   footer: siteFooterContainer,
 };
 
-const filmsModel = new FilmsModel();
 const commentsModel = new CommentsModel();
-
-console.log(commentsModel.getComments());
-
-
-/*const filmsPresenter = new FilmsPresenter(Containers, filmsModel, commentsModel);
+const filmsModel = new FilmsModel(commentsModel);
+const filmsPresenter = new FilmsPresenter(Containers, filmsModel, commentsModel);
 
 filmsPresenter.renderHeader();
 filmsPresenter.renderContent();
-filmsPresenter.renderFooter();*/
+filmsPresenter.renderFooter();
