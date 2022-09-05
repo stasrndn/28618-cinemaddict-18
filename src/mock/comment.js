@@ -39,33 +39,14 @@ const comments = [
 ];
 
 /**
- * Генерирует эмоцию для комментария
- * @returns {string}
+ * Выбирает случайный элемент массива
+ * @param array
+ * @returns {*}
  */
-const generateEmotion = () => {
-  const randomIndex = getRandomInteger(0, emotions.length - 1);
+const getRandomElementFromArray = (array) => {
+  const randomIndex = getRandomInteger(0, array.length - 1);
 
-  return emotions[randomIndex];
-};
-
-/**
- * Генерирует имя автора
- * @returns {string}
- */
-const generateAuthor = () => {
-  const randomIndex = getRandomInteger(0, emotions.length - 1);
-
-  return authors[randomIndex];
-};
-
-/**
- * Генерирует комментарий автора
- * @returns {string}
- */
-const generateComments = () => {
-  const randomIndex = getRandomInteger(0, emotions.length - 1);
-
-  return comments[randomIndex];
+  return array[randomIndex];
 };
 
 /**
@@ -80,8 +61,8 @@ const generateDate = () => {
 
 export const generateComment = () => ({
   id: generateId(),
-  author: generateAuthor(),
-  comment: generateComments(),
+  author: getRandomElementFromArray(authors),
+  comment: getRandomElementFromArray(comments),
   date: generateDate(),
-  emotion: generateEmotion(),
+  emotion: getRandomElementFromArray(emotions),
 });
