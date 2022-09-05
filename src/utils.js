@@ -26,7 +26,15 @@ const getRandomFloat = (a, b, digits = 1) => {
   return +result.toFixed(digits);
 };
 
+/**
+ * Возвращает true, если нажата клавиша Escape
+ * @param evt
+ * @returns {boolean}
+ */
+const isEscapeKey = (evt) => evt.key === 'Escape';
+
 export {
   getRandomInteger,
   getRandomFloat,
+  isEscapeKey,
 };

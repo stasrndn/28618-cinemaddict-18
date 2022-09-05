@@ -9,6 +9,7 @@ import FilmsListShowMoreButtonView from '../view/films-list-show-more-button-vie
 import FooterStatisticsView from '../view/footer-statistics-view.js';
 import { render, RenderPosition } from '../render.js';
 import FilmDetailsView from '../view/film-details-view';
+import {isEscapeKey} from '../utils.js';
 
 export default class FilmsPresenter {
   constructor(containers, filmsModel, commentsModel) {
@@ -61,6 +62,18 @@ export default class FilmsPresenter {
 
     render(allMoviesList, films.getElement());
     render(allMoviesTitle, allMoviesList.getElement(), RenderPosition.AFTERBEGIN);
+
+    /**
+     * Обработчик нажатия клавиши Escape
+     * @param evt
+     */
+    const onDocumentKeydown = (evt) => {
+      if (isEscapeKey(evt)) {
+        const filmCardDetail = document.querySelector('.film-details');
+
+        this.#removeNode(filmCardDetail);
+      }
+    };
 
     /**
      * Обработчик клика по карточке фильма
@@ -118,6 +131,8 @@ export default class FilmsPresenter {
       render(filmCard, mostCommentedListContainer);
       filmCard.getElement().addEventListener('click', onClickFilmCard);
     }
+
+    document.addEventListener('keydown', onDocumentKeydown);
   }
 
   renderFooter() {
