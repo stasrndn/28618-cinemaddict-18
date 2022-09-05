@@ -1,3 +1,5 @@
+import {customAlphabet} from 'nanoid';
+
 /**
  * Генерирует случайное целое число
  * @param a - целое число
@@ -33,8 +35,20 @@ const getRandomFloat = (a, b, digits = 1) => {
  */
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
+/**
+ * Генерирует случайный идентификатор
+ * @param alphabet - допустимые символы идентификатора
+ * @param size - длина идентификатора
+ * @returns {string}
+ */
+const generateId = (alphabet = '1234567890', size = 10) => {
+  const nanoid = customAlphabet(alphabet, size);
+  return nanoid();
+};
+
 export {
   getRandomInteger,
   getRandomFloat,
   isEscapeKey,
+  generateId,
 };

@@ -25,9 +25,16 @@ const MAX_FILM_COMMENT_COUNT = 11;
  */
 const MAX_LENGTH_DESCRIPTION_FILM = 139;
 
+/**
+ * Нырнуть в прошлое максимум на 5 лет
+ * @type {number}
+ */
+const MAX_PAST_COMMENT_YEAR = 5;
+
 export {
   MAX_FILMS_COUNT,
   MAX_COMMENTS_COUNT,
   MAX_FILM_COMMENT_COUNT,
   MAX_LENGTH_DESCRIPTION_FILM,
+  MAX_PAST_COMMENT_YEAR,
 };

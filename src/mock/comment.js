@@ -1,4 +1,9 @@
-import {getRandomInteger} from '../utils.js';
+import {getRandomInteger, generateId} from '../utils.js';
+import dayjs from 'dayjs';
+import dayjsRandom from 'dayjs-random';
+import {MAX_PAST_COMMENT_YEAR} from '../const.js';
+
+dayjs.extend(dayjsRandom);
 
 const emotions = [
   'smile',
@@ -34,21 +39,6 @@ const comments = [
 ];
 
 /**
- * Генерирует id комментария
- * @type {{getNext(): number}}
- */
-const generateId = (() => {
-  let id = 0;
-
-  return {
-    getNext() {
-      id++;
-      return id;
-    }
-  };
-})();
-
-/**
  * Генерирует эмоцию для комментария
  * @returns {string}
  */
@@ -80,12 +70,16 @@ const generateComments = () => {
 
 /**
  * Генерирует случайную дату в диапазоне
+ * текущая дата - 5 лет
  * @returns {Date}
  */
-const generateDate = () => '';
+const generateDate = () => {
+  const pastTime = dayjs().subtract(MAX_PAST_COMMENT_YEAR, 'years');
+  return dayjs.between(pastTime, dayjs()).format('YYYY/MM/DD HH:mm');
+};
 
 export const generateComment = () => ({
-  id: generateId.getNext(),
+  id: generateId(),
   author: generateAuthor(),
   comment: generateComments(),
   date: generateDate(),
