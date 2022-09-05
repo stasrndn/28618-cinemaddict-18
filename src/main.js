@@ -14,8 +14,8 @@ const Containers = {
 
 const filmsModel = new FilmsModel();
 const commentsModel = new CommentsModel();
-const filmsPresenter = new FilmsPresenter(Containers, filmsModel, commentsModel);
+/*const filmsPresenter = new FilmsPresenter(Containers, filmsModel, commentsModel);
 
 filmsPresenter.renderHeader();
 filmsPresenter.renderContent();
-filmsPresenter.renderFooter();
+filmsPresenter.renderFooter();*/
