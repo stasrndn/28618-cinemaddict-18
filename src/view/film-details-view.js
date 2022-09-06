@@ -1,68 +1,297 @@
 import { createElement } from '../render.js';
+import dayjs from 'dayjs';
 
-const createFilmDetailsTemplate = () => (
-  `<section class="film-details">
-    <div class="film-details__inner">
+/**
+ * Шаблон блока с постером фильма
+ * @param poster
+ * @returns {string}
+ */
+const createFilmDetailsPosterTemplate = (poster) => (
+  `${poster.length ? `<img class="film-details__poster-img" src="${poster}" alt="">` : ''}`
+);
+
+/**
+ * Шаблон блока с рейтингом фильма
+ * @param totalRating
+ * @returns {string}
+ */
+const createFilmDetailsTotalRatingTemplate = (totalRating) => (
+  `<div class="film-details__rating">
+    <p class="film-details__total-rating">${totalRating}</p>
+  </div>`
+);
+
+/**
+ * Шаблон блока с названием фильма
+ * @param title
+ * @returns {string}
+ */
+const createFilmDetailsTitleTemplate = (title) => (
+  `${title.length
+    ? `<h3 class="film-details__title">${title}</h3>`
+    : ''}`
+);
+
+/**
+ * Шаблон блока с оригинальным названием фильма
+ * @param alternativeTitle
+ * @returns {string}
+ */
+const createFilmDetailsAlternativeTitleTemplate = (alternativeTitle) => (
+  `${alternativeTitle.length
+    ? `<p class="film-details__title-original">Original: ${alternativeTitle}</p>`
+    : ''}`
+);
+
+/**
+ * Шаблон блока с режиссёром фильма
+ * @param director
+ * @returns {string}
+ */
+const createFilmDetailsDirectorTemplate = (director) => (
+  `${director.length
+    ? `<tr class="film-details__row">
+        <td class="film-details__term">Director</td>
+        <td class="film-details__cell">${director}</td>
+      </tr>`
+    : ''}`
+);
+
+/**
+ * Шаблон блока со сценаристами
+ * @param writers
+ * @returns {string}
+ */
+const createFilmDetailsWritersTemplate = (writers) => (
+  `${writers.length
+    ? `<tr class="film-details__row">
+          <td class="film-details__term">${writers.length > 1 ? 'Writers' : 'Writer'}</td>
+          <td class="film-details__cell">${writers.join(', ')}</td>
+        </tr>`
+    : ''}`
+);
+
+/**
+ * Шаблон блока с актёрами
+ * @param actors
+ * @returns {string}
+ */
+const createFilmDetailsActorsTemplate = (actors) => (
+  `${actors.length
+    ? `<tr class="film-details__row">
+          <td class="film-details__term">${actors.length > 1 ? 'Actors' : 'Actor'}</td>
+          <td class="film-details__cell">${actors.join(', ')}</td>
+        </tr>`
+    : ''}`
+);
+
+/**
+ * Шаблон блока с датой релиза фильма
+ * @param release
+ * @returns {string}
+ */
+const createFilmDetailsReleaseDateTemplate = (release) => (
+  `${release.date.length
+    ? `<tr class="film-details__row">
+          <td class="film-details__term">Release Date</td>
+          <td class="film-details__cell">${dayjs(release.date).format('DD MMMM YYYY')}</td>
+       </tr>`
+    : ''}`
+);
+
+/**
+ * Шаблон блока с продолжительностью фильма
+ * @param runtime
+ * @returns {string}
+ */
+const createFilmDetailsRuntimeTemplate = (runtime) => (
+  `${runtime.length
+    ? `<tr class="film-details__row">
+          <td class="film-details__term">Runtime</td>
+          <td class="film-details__cell">${runtime}</td>
+       </tr>`
+    : ''}`
+);
+
+/**
+ * Шаблон блока с жанрами фильма
+ * @param genres
+ * @returns {string}
+ */
+const createFilmDetailsGenresTemplate = (genres) => (
+  `${genres.length
+    ? `<tr class="film-details__row">
+        <td class="film-details__term">${genres.length > 1 ? 'Genres' : 'Genre'}</td>
+        <td class="film-details__cell">
+          ${genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join('')}
+       </tr>`
+    : ''}`
+);
+
+/**
+ * Шаблон блока страны происхождения фильма
+ * @param release
+ * @returns {string}
+ */
+const createFilmDetailsCountryTemplate = (release) => (
+  `${release.releaseCountry.length
+    ? `<tr class="film-details__row">
+        <td class="film-details__term">Country</td>
+        <td class="film-details__cell">${release.releaseCountry}</td>
+      </tr>`
+    : ''}`
+);
+
+/**
+ * Шаблон блока с описанием фильма
+ * @param description
+ * @returns {string}
+ */
+const createFilmDetailsDescriptionTemplate = (description) => (
+  `${description.length
+    ? `<p class="film-details__film-description">${description}</p>`
+    : ''}`
+);
+
+/**
+ * Шаблон блока с возрастными ограничениями
+ * @param ageRating
+ * @returns {string}
+ */
+const createFilmDetailsAgeRatingTemplate = (ageRating) => (
+  `${ageRating !== null
+    ? `<p class="film-details__age">${ageRating}+</p>`
+    : ''}`
+);
+
+/**
+ * Шаблон блока заголовка комментариев
+ * @param comments
+ * @returns {string}
+ */
+const createFilmDetailsCommentsTitleTemplate = (comments) => (
+  `<h3 class="film-details__comments-title">Comments ${comments.length
+    ? `<span class="film-details__comments-count">${comments.length}</span>`
+    : ''}</h3>`
+);
+
+/**
+ * Шаблон блока списка комментариев
+ * @param comments
+ * @returns {string}
+ */
+const createFilmDetailsCommentsListTemplate = (comments) => (
+  `<ul class="film-details__comments-list">
+        ${comments.map((item) => {
+    const {author, comment, date, emotion} = item;
+    return (
+      `<li class="film-details__comment">
+                <span class="film-details__comment-emoji">
+                  <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
+                </span>
+                <div>
+                  <p class="film-details__comment-text">${comment}</p>
+                  <p class="film-details__comment-info">
+                    <span class="film-details__comment-author">${author}</span>
+                    <span class="film-details__comment-day">${date}</span>
+                    <button class="film-details__comment-delete">Delete</button>
+                  </p>
+                </div>
+              </li>`
+    );
+  }).join('')}
+     </ul>`
+);
+
+/**
+ * Возвращает комментарии к выбранному фильму
+ * @param comments
+ * @param filmCommentsIds
+ * @returns {*}
+ */
+const getContentFilmComments = (comments, filmCommentsIds) => {
+  let selectedComments = comments.filter((comment) => filmCommentsIds.includes(comment.id));
+
+  selectedComments = selectedComments.map((item) => {
+    const {author, comment, date, emotion} = item;
+    return ({
+      author,
+      comment,
+      date: dayjs(date).format('YYYY/MM/DD HH:mm'),
+      emotion
+    });
+  });
+
+  return selectedComments;
+};
+
+const createFilmDetailsTemplate = (film, comments) => {
+
+  const {
+    poster,
+    totalRating,
+    title,
+    alternativeTitle,
+    director,
+    writers,
+    actors,
+    release,
+    runtime,
+    genre,
+    description,
+    ageRating,
+  } = film.filmInfo;
+
+  const contentFilmComments = getContentFilmComments(comments, film.comments);
+
+  const posterTemplate = createFilmDetailsPosterTemplate(poster);
+  const totalRatingTemplate = createFilmDetailsTotalRatingTemplate(totalRating);
+  const titleTemplate = createFilmDetailsTitleTemplate(title);
+  const alternativeTitleTemplate = createFilmDetailsAlternativeTitleTemplate(alternativeTitle);
+  const directorTemplate = createFilmDetailsDirectorTemplate(director);
+  const writersTemplate = createFilmDetailsWritersTemplate(writers);
+  const actorsTemplate = createFilmDetailsActorsTemplate(actors);
+  const releaseDateTemplate = createFilmDetailsReleaseDateTemplate(release);
+  const runtimeTemplate = createFilmDetailsRuntimeTemplate(runtime);
+  const countryTemplate = createFilmDetailsCountryTemplate(release);
+  const genresTemplate = createFilmDetailsGenresTemplate(genre);
+  const descriptionTemplate = createFilmDetailsDescriptionTemplate(description);
+  const ageRatingTemplate = createFilmDetailsAgeRatingTemplate(ageRating);
+  const commentsTitleTemplate = createFilmDetailsCommentsTitleTemplate(film.comments);
+  const commentsListTemplate = createFilmDetailsCommentsListTemplate(contentFilmComments);
+
+  return (`
+    <section class="film-details">
+        <div class="film-details__inner">
       <div class="film-details__top-container">
         <div class="film-details__close">
           <button class="film-details__close-btn" type="button">close</button>
         </div>
         <div class="film-details__info-wrap">
           <div class="film-details__poster">
-            <img class="film-details__poster-img" src="./images/posters/the-great-flamarion.jpg" alt="">
-
-            <p class="film-details__age">18+</p>
+            ${posterTemplate}
+            ${ageRatingTemplate}
           </div>
 
           <div class="film-details__info">
             <div class="film-details__info-head">
               <div class="film-details__title-wrap">
-                <h3 class="film-details__title">The Great Flamarion</h3>
-                <p class="film-details__title-original">Original: The Great Flamarion</p>
+                ${titleTemplate}
+                ${alternativeTitleTemplate}
               </div>
-
-              <div class="film-details__rating">
-                <p class="film-details__total-rating">8.9</p>
-              </div>
+              ${totalRatingTemplate}
             </div>
 
             <table class="film-details__table">
-              <tr class="film-details__row">
-                <td class="film-details__term">Director</td>
-                <td class="film-details__cell">Anthony Mann</td>
-              </tr>
-              <tr class="film-details__row">
-                <td class="film-details__term">Writers</td>
-                <td class="film-details__cell">Anne Wigton, Heinz Herald, Richard Weil</td>
-              </tr>
-              <tr class="film-details__row">
-                <td class="film-details__term">Actors</td>
-                <td class="film-details__cell">Erich von Stroheim, Mary Beth Hughes, Dan Duryea</td>
-              </tr>
-              <tr class="film-details__row">
-                <td class="film-details__term">Release Date</td>
-                <td class="film-details__cell">30 March 1945</td>
-              </tr>
-              <tr class="film-details__row">
-                <td class="film-details__term">Runtime</td>
-                <td class="film-details__cell">1h 18m</td>
-              </tr>
-              <tr class="film-details__row">
-                <td class="film-details__term">Country</td>
-                <td class="film-details__cell">USA</td>
-              </tr>
-              <tr class="film-details__row">
-                <td class="film-details__term">Genres</td>
-                <td class="film-details__cell">
-                  <span class="film-details__genre">Drama</span>
-                  <span class="film-details__genre">Film-Noir</span>
-                  <span class="film-details__genre">Mystery</span></td>
-              </tr>
+              ${directorTemplate}
+              ${writersTemplate}
+              ${actorsTemplate}
+              ${releaseDateTemplate}
+              ${runtimeTemplate}
+              ${countryTemplate}
+              ${genresTemplate}
             </table>
-
-            <p class="film-details__film-description">
-              The film opens following a murder at a cabaret in Mexico City in 1936, and then presents the events leading up to it in flashback. The Great Flamarion (Erich von Stroheim) is an arrogant, friendless, and misogynous marksman who displays his trick gunshot act in the vaudeville circuit. His show features a beautiful assistant, Connie (Mary Beth Hughes) and her drunken husband Al (Dan Duryea), Flamarion's other assistant. Flamarion falls in love with Connie, the movie's femme fatale, and is soon manipulated by her into killing her no good husband during one of their acts.
-            </p>
+            ${descriptionTemplate}
           </div>
         </div>
 
@@ -75,63 +304,8 @@ const createFilmDetailsTemplate = () => (
 
       <div class="film-details__bottom-container">
         <section class="film-details__comments-wrap">
-          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">4</span></h3>
-
-          <ul class="film-details__comments-list">
-            <li class="film-details__comment">
-              <span class="film-details__comment-emoji">
-                <img src="./images/emoji/smile.png" width="55" height="55" alt="emoji-smile">
-              </span>
-              <div>
-                <p class="film-details__comment-text">Interesting setting and a good cast</p>
-                <p class="film-details__comment-info">
-                  <span class="film-details__comment-author">Tim Macoveev</span>
-                  <span class="film-details__comment-day">2019/12/31 23:59</span>
-                  <button class="film-details__comment-delete">Delete</button>
-                </p>
-              </div>
-            </li>
-            <li class="film-details__comment">
-              <span class="film-details__comment-emoji">
-                <img src="./images/emoji/sleeping.png" width="55" height="55" alt="emoji-sleeping">
-              </span>
-              <div>
-                <p class="film-details__comment-text">Booooooooooring</p>
-                <p class="film-details__comment-info">
-                  <span class="film-details__comment-author">John Doe</span>
-                  <span class="film-details__comment-day">2 days ago</span>
-                  <button class="film-details__comment-delete">Delete</button>
-                </p>
-              </div>
-            </li>
-            <li class="film-details__comment">
-              <span class="film-details__comment-emoji">
-                <img src="./images/emoji/puke.png" width="55" height="55" alt="emoji-puke">
-              </span>
-              <div>
-                <p class="film-details__comment-text">Very very old. Meh</p>
-                <p class="film-details__comment-info">
-                  <span class="film-details__comment-author">John Doe</span>
-                  <span class="film-details__comment-day">2 days ago</span>
-                  <button class="film-details__comment-delete">Delete</button>
-                </p>
-              </div>
-            </li>
-            <li class="film-details__comment">
-              <span class="film-details__comment-emoji">
-                <img src="./images/emoji/angry.png" width="55" height="55" alt="emoji-angry">
-              </span>
-              <div>
-                <p class="film-details__comment-text">Almost two hours? Seriously?</p>
-                <p class="film-details__comment-info">
-                  <span class="film-details__comment-author">John Doe</span>
-                  <span class="film-details__comment-day">Today</span>
-                  <button class="film-details__comment-delete">Delete</button>
-                </p>
-              </div>
-            </li>
-          </ul>
-
+          ${commentsTitleTemplate}
+          ${commentsListTemplate}
           <form class="film-details__new-comment" action="" method="get">
             <div class="film-details__add-emoji-label"></div>
 
@@ -164,12 +338,18 @@ const createFilmDetailsTemplate = () => (
         </section>
       </div>
     </div>
-  </section>`
-);
+    </section>
+  `);
+};
 
 export default class FilmDetailsView {
+  constructor(film, comments) {
+    this.film = film;
+    this.comments = comments;
+  }
+
   getTemplate() {
-    return createFilmDetailsTemplate();
+    return createFilmDetailsTemplate(this.film, this.comments);
   }
 
   getElement() {
