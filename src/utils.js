@@ -1,3 +1,4 @@
+import {ESCAPE_KEY, ID_SIZE, ID_VALID_SYMBOLS} from './const.js';
 import {customAlphabet} from 'nanoid';
 
 /**
@@ -33,7 +34,7 @@ const getRandomFloat = (a, b, digits = 1) => {
  * @param evt
  * @returns {boolean}
  */
-const isEscapeKey = (evt) => evt.key === 'Escape';
+const isEscapeKey = (evt) => evt.key === ESCAPE_KEY;
 
 /**
  * Генерирует случайный идентификатор
@@ -41,7 +42,7 @@ const isEscapeKey = (evt) => evt.key === 'Escape';
  * @param size - длина идентификатора
  * @returns {string}
  */
-const generateId = (alphabet = '1234567890', size = 10) => {
+const generateId = (alphabet = ID_VALID_SYMBOLS, size = ID_SIZE) => {
   const nanoid = customAlphabet(alphabet, size);
   return nanoid();
 };
