@@ -17,14 +17,5 @@ export default class FilmsModel {
 
   getFilms = () => this.#films;
 
-  getFilmById = (id) => {
-    for (let i = 0; i < this.#films.length; i++) {
-      const film = this.#films[i];
-      if (film.id === id) {
-        return film;
-      }
-    }
-
-    return null;
-  };
+  getFilmById = (id) => this.#films.find((film) => film.id === id);
 }
