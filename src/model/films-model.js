@@ -8,7 +8,7 @@ export default class FilmsModel {
   #films = [];
 
   constructor(commentsModel) {
-    this.#films = Array.from({length: MAX_FILMS_COUNT}, generateFilm.bind(this, commentsModel.getComments()));
+    this.#films = Array.from({length: MAX_FILMS_COUNT}, generateFilm.bind(this, commentsModel.comments));
   }
 
   get films() {
