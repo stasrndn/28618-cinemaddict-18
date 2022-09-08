@@ -43,25 +43,25 @@ export default class FilmsPresenter {
     const mostCommentedList = new FilmsListView();
     const mostCommentedTitle = new FilmsListTitleView();
 
-    const allMoviesListContainer = allMoviesList.getElement().querySelector('.films-list__container');
-    const topRatedListContainer = topRatedList.getElement().querySelector('.films-list__container');
-    const mostCommentedListContainer = mostCommentedList.getElement().querySelector('.films-list__container');
+    const allMoviesListContainer = allMoviesList.element.querySelector('.films-list__container');
+    const topRatedListContainer = topRatedList.element.querySelector('.films-list__container');
+    const mostCommentedListContainer = mostCommentedList.element.querySelector('.films-list__container');
 
-    allMoviesTitle.getElement().classList.add('visually-hidden');
-    allMoviesTitle.getElement().textContent = 'All movies. Upcoming';
+    allMoviesTitle.element.classList.add('visually-hidden');
+    allMoviesTitle.element.textContent = 'All movies. Upcoming';
 
-    topRatedList.getElement().classList.add('films-list--extra');
-    topRatedTitle.getElement().textContent = 'Top rated';
+    topRatedList.element.classList.add('films-list--extra');
+    topRatedTitle.element.textContent = 'Top rated';
 
-    mostCommentedList.getElement().classList.add('films-list--extra');
-    mostCommentedTitle.getElement().textContent = 'Most commented';
+    mostCommentedList.element.classList.add('films-list--extra');
+    mostCommentedTitle.element.textContent = 'Most commented';
 
     render(mainNavigation, this.mainContainer);
     render(sortFilter, this.mainContainer);
     render(films, this.mainContainer);
 
-    render(allMoviesList, films.getElement());
-    render(allMoviesTitle, allMoviesList.getElement(), RenderPosition.AFTERBEGIN);
+    render(allMoviesList, films.element);
+    render(allMoviesTitle, allMoviesList.element, RenderPosition.AFTERBEGIN);
 
     /**
      * Обработчик нажатия клавиши Escape
@@ -108,28 +108,28 @@ export default class FilmsPresenter {
       const filmCard = new FilmCardView(this.films[i]);
 
       render(filmCard, allMoviesListContainer);
-      filmCard.getElement().addEventListener('click', onClickFilmCard);
+      filmCard.element.addEventListener('click', onClickFilmCard);
     }
 
-    render(allMoviesMoreButton, allMoviesList.getElement());
-    render(topRatedList, films.getElement());
-    render(topRatedTitle, topRatedList.getElement(), RenderPosition.AFTERBEGIN);
+    render(allMoviesMoreButton, allMoviesList.element);
+    render(topRatedList, films.element);
+    render(topRatedTitle, topRatedList.element, RenderPosition.AFTERBEGIN);
 
     for (let i = 2; i < 4; i++) {
       const filmCard = new FilmCardView(this.films[i]);
 
       render(filmCard, topRatedListContainer);
-      filmCard.getElement().addEventListener('click', onClickFilmCard);
+      filmCard.element.addEventListener('click', onClickFilmCard);
     }
 
-    render(mostCommentedList, films.getElement());
-    render(mostCommentedTitle, mostCommentedList.getElement(), RenderPosition.AFTERBEGIN);
+    render(mostCommentedList, films.element);
+    render(mostCommentedTitle, mostCommentedList.element, RenderPosition.AFTERBEGIN);
 
     for (let i = 1; i < 3; i++) {
       const filmCard = new FilmCardView(this.films[i]);
 
       render(filmCard, mostCommentedListContainer);
-      filmCard.getElement().addEventListener('click', onClickFilmCard);
+      filmCard.element.addEventListener('click', onClickFilmCard);
     }
 
     document.addEventListener('keydown', onDocumentKeydown);
