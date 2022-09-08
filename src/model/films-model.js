@@ -11,7 +11,9 @@ export default class FilmsModel {
     this.#films = Array.from({length: MAX_FILMS_COUNT}, generateFilm.bind(this, commentsModel.getComments()));
   }
 
-  getFilms = () => this.#films;
+  get films() {
+    return this.#films;
+  }
 
   getFilmById = (id) => this.#films.find((film) => film.id === id);
 }
