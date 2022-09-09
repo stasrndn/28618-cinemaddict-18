@@ -1,4 +1,4 @@
-import {ESCAPE_KEY, ID_SIZE, ID_VALID_SYMBOLS} from './const.js';
+import {ESC_KEY, ESCAPE_KEY, ID_SIZE, ID_VALID_SYMBOLS} from './const.js';
 import {customAlphabet} from 'nanoid';
 
 /**
@@ -34,7 +34,7 @@ const getRandomFloat = (a, b, digits = 1) => {
  * @param evt
  * @returns {boolean}
  */
-const isEscapeKey = (evt) => evt.key === ESCAPE_KEY;
+const isEscapeKey = (evt) => (evt.key === ESCAPE_KEY || evt.key === ESC_KEY);
 
 /**
  * Генерирует случайный идентификатор

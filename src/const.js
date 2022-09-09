@@ -38,6 +38,12 @@ const MAX_PAST_COMMENT_YEAR = 5;
 const ESCAPE_KEY = 'Escape';
 
 /**
+ * Наименование клавиши Esc
+ * @type {string}
+ */
+const ESC_KEY = 'Esc';
+
+/**
  * Допустимые символы ID при генерации
  * @type {string}
  */
@@ -56,6 +62,7 @@ export {
   MAX_LENGTH_DESCRIPTION_FILM,
   MAX_PAST_COMMENT_YEAR,
   ESCAPE_KEY,
+  ESC_KEY,
   ID_VALID_SYMBOLS,
   ID_SIZE,
 };
