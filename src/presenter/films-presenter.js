@@ -74,7 +74,19 @@ export default class FilmsPresenter {
     render(this.#allMoviesListComponent, this.#filmsComponent.element);
     render(this.#allMoviesTitleComponent, this.#allMoviesListComponent.element, RenderPosition.AFTERBEGIN);
 
-    this.#renderFilmsCards();
+    this.#renderAllFilmsCards();
+
+    render(this.#allMoviesMoreButtonComponent, this.#allMoviesListComponent.element);
+
+    render(this.#topRatedListComponent, this.#filmsComponent.element);
+    render(this.#topRatedTitleComponent, this.#topRatedListComponent.element, RenderPosition.AFTERBEGIN);
+
+    this.#renderTopRatedFilmsCards();
+
+    render(this.#mostCommentedListComponent, this.#filmsComponent.element);
+    render(this.#mostCommentedTitleComponent, this.#mostCommentedListComponent.element, RenderPosition.AFTERBEGIN);
+
+    this.#renderMostCommentedFilmsCards();
 
     this.#container.addEventListener('keydown', this.#onContainerKeydown);
   }
@@ -99,9 +111,24 @@ export default class FilmsPresenter {
     this.#mostCommentedTitleComponent.element.textContent = 'Most commented';
   }
 
-  #renderFilmsCards() {
+  #renderAllFilmsCards() {
     for (let i = 0; i < this.#films.length; i++) {
-      this.#renderFilmCard(this.#films[i]);
+      const filmComponent = this.#renderFilmCard(this.#films[i]);
+      render(filmComponent, this.#allMoviesListContainer);
+    }
+  }
+
+  #renderTopRatedFilmsCards() {
+    for (let i = 1; i < 3; i++) {
+      const filmComponent = this.#renderFilmCard(this.#films[i]);
+      render(filmComponent, this.#topRatedListContainer);
+    }
+  }
+
+  #renderMostCommentedFilmsCards() {
+    for (let i = 3; i < 5; i++) {
+      const filmComponent = this.#renderFilmCard(this.#films[i]);
+      render(filmComponent, this.#mostCommentedListContainer);
     }
   }
 
@@ -135,7 +162,7 @@ export default class FilmsPresenter {
     markAsWatchedButton.addEventListener('click', onClickMarkAsWatchedButton);
     markAsFavoriteButton.addEventListener('click', onClickMarkAsFavoriteButton);
 
-    render(filmComponent, this.#allMoviesListContainer);
+    return filmComponent;
   }
 
   #renderFilmCardDetail(film) {
