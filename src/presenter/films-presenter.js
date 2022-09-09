@@ -185,7 +185,7 @@ export default class FilmsPresenter {
   #removeFilmCardDetail() {
     if (this.#filmDetailComponent !== null) {
       this.#container.classList.remove('hide-overflow');
-      this.#container.lastChild.remove();
+      this.#container.querySelector('.film-details').remove();
       this.#filmDetailComponent = null;
     }
   }
@@ -201,9 +201,7 @@ export default class FilmsPresenter {
 
   #onContainerKeydown = (evt) => {
     if (isEscapeKey(evt)) {
-      if (this.#filmDetailComponent !== null) {
-        this.#removeFilmCardDetail();
-      }
+      this.#removeFilmCardDetail();
     }
   };
 }
