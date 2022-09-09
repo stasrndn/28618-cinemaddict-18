@@ -7,5 +7,7 @@ import {MAX_COMMENTS_COUNT} from '../const.js';
 export default class CommentsModel {
   #comments = Array.from({length: MAX_COMMENTS_COUNT}, generateComment);
 
-  getComments = () => this.#comments;
+  get comments() {
+    return this.#comments;
+  }
 }

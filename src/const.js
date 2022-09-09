@@ -31,10 +31,38 @@ const MAX_LENGTH_DESCRIPTION_FILM = 139;
  */
 const MAX_PAST_COMMENT_YEAR = 5;
 
+/**
+ * Наименование клавиши Escape
+ * @type {string}
+ */
+const ESCAPE_KEY = 'Escape';
+
+/**
+ * Наименование клавиши Esc
+ * @type {string}
+ */
+const ESC_KEY = 'Esc';
+
+/**
+ * Допустимые символы ID при генерации
+ * @type {string}
+ */
+const ID_VALID_SYMBOLS = '1234567890';
+
+/**
+ * Длина генерируемого идентификатора
+ * @type {number}
+ */
+const ID_SIZE = 10;
+
 export {
   MAX_FILMS_COUNT,
   MAX_COMMENTS_COUNT,
   MAX_FILM_COMMENT_COUNT,
   MAX_LENGTH_DESCRIPTION_FILM,
   MAX_PAST_COMMENT_YEAR,
+  ESCAPE_KEY,
+  ESC_KEY,
+  ID_VALID_SYMBOLS,
+  ID_SIZE,
 };

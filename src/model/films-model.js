@@ -6,25 +6,14 @@ import {MAX_FILMS_COUNT} from '../const.js';
  */
 export default class FilmsModel {
   #films = [];
-  #comments = [];
-  #commentsModel = null;
 
   constructor(commentsModel) {
-    this.#commentsModel = commentsModel;
-    this.#comments = [...this.#commentsModel.getComments()];
-    this.#films = Array.from({length: MAX_FILMS_COUNT}, generateFilm.bind(this, this.#comments));
+    this.#films = Array.from({length: MAX_FILMS_COUNT}, generateFilm.bind(this, commentsModel.comments));
   }
 
-  getFilms = () => this.#films;
+  get films() {
+    return this.#films;
+  }
 
-  getFilmById = (id) => {
-    for (let i = 0; i < this.#films.length; i++) {
-      const film = this.#films[i];
-      if (film.id === id) {
-        return film;
-      }
-    }
-
-    return null;
-  };
+  getFilmById = (id) => this.#films.find((film) => film.id === id);
 }
