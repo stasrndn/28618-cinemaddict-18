@@ -3,7 +3,7 @@
  * отдаваемых моделью
  * @type {number}
  */
-const MAX_FILMS_COUNT = 5;
+const MAX_FILMS_COUNT = 22;
 
 /**
  * Максимальное количество комментариев,
@@ -55,6 +55,12 @@ const ID_VALID_SYMBOLS = '1234567890';
  */
 const ID_SIZE = 10;
 
+/**
+ * Сколько фильмов отрисовать за один шаг
+ * @type {number}
+ */
+const FILM_COUNT_PER_STEP = 5;
+
 export {
   MAX_FILMS_COUNT,
   MAX_COMMENTS_COUNT,
@@ -65,4 +71,5 @@ export {
   ESC_KEY,
   ID_VALID_SYMBOLS,
   ID_SIZE,
+  FILM_COUNT_PER_STEP,
 };

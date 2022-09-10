@@ -10,6 +10,7 @@ import FooterStatisticsView from '../view/footer-statistics-view.js';
 import FilmDetailsView from '../view/film-details-view';
 import {isEscapeKey} from '../utils.js';
 import { render, RenderPosition } from '../render.js';
+import {FILM_COUNT_PER_STEP} from '../const';
 
 export default class FilmsPresenter {
   #container = null;
@@ -42,6 +43,9 @@ export default class FilmsPresenter {
   #films = [];
   #comments = [];
 
+  #renderedFilmCount = FILM_COUNT_PER_STEP;
+  #isFilmsEmpty = false;
+
   constructor(container, filmsModel, commentsModel) {
     this.#container = container;
     this.#filmsModel = filmsModel;
@@ -51,6 +55,8 @@ export default class FilmsPresenter {
   init() {
     this.#films = [...this.#filmsModel.films];
     this.#comments = [...this.#commentsModel.comments];
+
+    this.#isFilmsEmpty = this.#films.every((film) => film.id === null);
 
     this.#initContainers();
 
@@ -64,18 +70,43 @@ export default class FilmsPresenter {
     render(headerProfileView, this.#headerContainer);
   }
 
+  #onClickAllMoviesMoreButtonComponent = (evt) => {
+    evt.preventDefault();
+
+    this.#films
+      .slice(this.#renderedFilmCount, this.#renderedFilmCount + FILM_COUNT_PER_STEP)
+      .forEach((film) => render(this.#renderFilmCard(film), this.#allMoviesListContainer));
+
+    this.#renderedFilmCount += FILM_COUNT_PER_STEP;
+
+    if (this.#renderedFilmCount >= this.#films.length) {
+      this.#allMoviesMoreButtonComponent.element.remove();
+      this.#allMoviesMoreButtonComponent.removeElement();
+    }
+
+  };
+
   #renderContent() {
     this.#initComponents();
 
     render(this.#mainNavigationComponent, this.#mainContainer);
-    render(this.#sortFilterComponent, this.#mainContainer);
+
+    if (!this.#isFilmsEmpty) {
+      render(this.#sortFilterComponent, this.#mainContainer);
+    }
+
     render(this.#filmsComponent, this.#mainContainer);
 
     render(this.#allMoviesListComponent, this.#filmsComponent.element);
     render(this.#allMoviesTitleComponent, this.#allMoviesListComponent.element, RenderPosition.AFTERBEGIN);
 
+    if (this.#isFilmsEmpty) {
+      return;
+    }
+
     this.#renderAllFilmsCards();
 
+    this.#allMoviesMoreButtonComponent.element.addEventListener('click', this.#onClickAllMoviesMoreButtonComponent);
     render(this.#allMoviesMoreButtonComponent, this.#allMoviesListComponent.element);
 
     render(this.#topRatedListComponent, this.#filmsComponent.element);
@@ -96,11 +127,23 @@ export default class FilmsPresenter {
     this.#headerContainer = this.#container.querySelector('.header');
     this.#footerContainer = this.#container.querySelector('.footer');
     this.#allMoviesListContainer = this.#allMoviesListComponent.element.querySelector('.films-list__container');
-    this.#topRatedListContainer = this.#topRatedListComponent.element.querySelector('.films-list__container');
-    this.#mostCommentedListContainer = this.#mostCommentedListComponent.element.querySelector('.films-list__container');
+
+    if (this.#isFilmsEmpty) {
+      this.#allMoviesListContainer.remove();
+    }
+
+    if (!this.#isFilmsEmpty) {
+      this.#topRatedListContainer = this.#topRatedListComponent.element.querySelector('.films-list__container');
+      this.#mostCommentedListContainer = this.#mostCommentedListComponent.element.querySelector('.films-list__container');
+    }
   }
 
   #initComponents() {
+    if (this.#isFilmsEmpty) {
+      this.#allMoviesTitleComponent.element.textContent = 'There are no movies in our database';
+      return;
+    }
+
     this.#allMoviesTitleComponent.element.classList.add('visually-hidden');
     this.#allMoviesTitleComponent.element.textContent = 'All movies. Upcoming';
 
@@ -112,7 +155,7 @@ export default class FilmsPresenter {
   }
 
   #renderAllFilmsCards() {
-    for (let i = 0; i < this.#films.length; i++) {
+    for (let i = 0; i < Math.min(this.#films.length, FILM_COUNT_PER_STEP); i++) {
       const filmComponent = this.#renderFilmCard(this.#films[i]);
       render(filmComponent, this.#allMoviesListContainer);
     }
@@ -197,6 +240,9 @@ export default class FilmsPresenter {
     const footerStatisticsContainer = this.#footerContainer.querySelector('.footer__statistics');
 
     render(footerStatistics, footerStatisticsContainer);
+
+    const footerStatisticsInside = footerStatisticsContainer.querySelector('p');
+    footerStatisticsInside.textContent = `${this.#films.length} movies inside`;
   }
 
   #onContainerKeydown = (evt) => {
