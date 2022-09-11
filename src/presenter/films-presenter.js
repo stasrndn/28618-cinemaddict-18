@@ -10,7 +10,7 @@ import FilmsListShowMoreButtonView from '../view/films-list-show-more-button-vie
 import FooterStatisticsView from '../view/footer-statistics-view.js';
 import FilmDetailsView from '../view/film-details-view';
 import {isEscapeKey} from '../utils.js';
-import { render, RenderPosition } from '../render.js';
+import { render, remove } from '../framework/render.js';
 import {FILM_COUNT_PER_STEP} from '../const';
 import FilmsListEmptyView from '../view/films-list-empty-view';
 
@@ -78,20 +78,16 @@ export default class FilmsPresenter {
     render(headerProfileView, this.#headerContainer);
   }
 
-  #onClickAllMoviesMoreButtonComponent = (evt) => {
-    evt.preventDefault();
-
+  #onClickAllMoviesMoreButtonComponent = () => {
     this.#films
       .slice(this.#renderedFilmCount, this.#renderedFilmCount + FILM_COUNT_PER_STEP)
-      .forEach((film) => render(this.#renderFilmCard(film), this.#allMoviesListContainer));
+      .forEach((film) => render(this.#renderFilmCard(film), this.#allMoviesListContainerComponent.element));
 
     this.#renderedFilmCount += FILM_COUNT_PER_STEP;
 
     if (this.#renderedFilmCount >= this.#films.length) {
-      this.#allMoviesMoreButtonComponent.element.remove();
-      this.#allMoviesMoreButtonComponent.removeElement();
+      remove(this.#allMoviesMoreButtonComponent);
     }
-
   };
 
   #renderContent() {
@@ -112,24 +108,24 @@ export default class FilmsPresenter {
       return;
     }
 
-    render(this.#allMoviesTitleComponent, this.#allMoviesListComponent.element, RenderPosition.AFTERBEGIN);
+    render(this.#allMoviesTitleComponent, this.#allMoviesListComponent.element);
 
     this.#renderAllFilmsCards();
 
     render(this.#allMoviesListContainerComponent, this.#allMoviesListComponent.element);
 
-    this.#allMoviesMoreButtonComponent.element.addEventListener('click', this.#onClickAllMoviesMoreButtonComponent);
+    this.#allMoviesMoreButtonComponent.setClickHandler(this.#onClickAllMoviesMoreButtonComponent);
     render(this.#allMoviesMoreButtonComponent, this.#allMoviesListComponent.element);
 
     render(this.#topRatedListComponent, this.#filmsComponent.element);
     render(this.#topRatedListContainerComponent, this.#topRatedListComponent.element);
-    render(this.#topRatedTitleComponent, this.#topRatedListComponent.element, RenderPosition.AFTERBEGIN);
+    render(this.#topRatedTitleComponent, this.#topRatedListComponent.element);
 
     this.#renderTopRatedFilmsCards();
 
     render(this.#mostCommentedListComponent, this.#filmsComponent.element);
     render(this.#mostCommentedListContainerComponent, this.#mostCommentedListComponent.element);
-    render(this.#mostCommentedTitleComponent, this.#mostCommentedListComponent.element, RenderPosition.AFTERBEGIN);
+    render(this.#mostCommentedTitleComponent, this.#mostCommentedListComponent.element);
 
     this.#renderMostCommentedFilmsCards();
 
@@ -181,10 +177,6 @@ export default class FilmsPresenter {
   #renderFilmCard(film) {
     const filmComponent = new FilmCardView(film);
 
-    const addToWatchlistButton = filmComponent.element.querySelector('.film-card__controls-item.film-card__controls-item--add-to-watchlist');
-    const markAsWatchedButton = filmComponent.element.querySelector('.film-card__controls-item.film-card__controls-item--mark-as-watched');
-    const markAsFavoriteButton = filmComponent.element.querySelector('.film-card__controls-item.film-card__controls-item--favorite');
-
     const onClickAddToWatchlistButton = () => {
     };
 
@@ -194,19 +186,15 @@ export default class FilmsPresenter {
     const onClickMarkAsFavoriteButton = () => {
     };
 
-    const onClickFilmComponent = (evt) => {
-      const isControlButton = evt.target.classList.contains('film-card__controls-item');
-
-      if (!isControlButton) {
-        this.#renderFilmCardDetail(film);
-      }
+    const onClickFilmComponent = () => {
+      this.#renderFilmCardDetail(film);
+      this.#container.classList.add('hide-overflow');
     };
 
-    filmComponent.element.addEventListener('click', onClickFilmComponent);
-
-    addToWatchlistButton.addEventListener('click', onClickAddToWatchlistButton);
-    markAsWatchedButton.addEventListener('click', onClickMarkAsWatchedButton);
-    markAsFavoriteButton.addEventListener('click', onClickMarkAsFavoriteButton);
+    filmComponent.setFilmCardClickHandler(onClickFilmComponent);
+    filmComponent.setAddToWatchlistButtonClickHandler(onClickAddToWatchlistButton);
+    filmComponent.setMarkAsWatchedButtonClickHandler(onClickMarkAsWatchedButton);
+    filmComponent.setMarkAsFavoriteButtonClickHandler(onClickMarkAsFavoriteButton);
 
     return filmComponent;
   }
@@ -215,15 +203,12 @@ export default class FilmsPresenter {
     this.#removeFilmCardDetail();
 
     this.#filmDetailComponent = new FilmDetailsView(film, this.#comments);
-    this.#container.classList.add('hide-overflow');
 
-    const onClickCloseButton = (evt) => {
-      evt.preventDefault();
+    const onClickCloseButton = () => {
       this.#removeFilmCardDetail();
     };
 
-    const closeButton = this.#filmDetailComponent.element.querySelector('.film-details__close-btn');
-    closeButton.addEventListener('click', onClickCloseButton);
+    this.#filmDetailComponent.setCloseButtonClickHandler(onClickCloseButton);
 
     render(this.#filmDetailComponent, this.#container);
   }
