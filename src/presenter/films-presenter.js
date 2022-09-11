@@ -19,7 +19,6 @@ export default class FilmsPresenter {
   #headerContainer = null;
   #mainContainer = null;
   #footerContainer = null;
-  #allMoviesListContainer = null;
 
   #filmsModel = null;
   #commentsModel = null;
@@ -49,7 +48,6 @@ export default class FilmsPresenter {
   #comments = [];
 
   #renderedFilmCount = FILM_COUNT_PER_STEP;
-  #isFilmsEmpty = false;
 
   constructor(container, filmsModel, commentsModel) {
     this.#container = container;
@@ -61,8 +59,7 @@ export default class FilmsPresenter {
     this.#films = [...this.#filmsModel.films];
     this.#comments = [...this.#commentsModel.comments];
 
-    this.#isFilmsEmpty = this.#films.length === 0;
-    if (this.#isFilmsEmpty) {
+    if (!this.#films.length) {
       this.#filmsListEmptyComponent = new FilmsListEmptyView();
     }
 
@@ -95,7 +92,7 @@ export default class FilmsPresenter {
 
     render(this.#mainNavigationComponent, this.#mainContainer);
 
-    if (!this.#isFilmsEmpty) {
+    if (this.#films.length) {
       render(this.#sortFilterComponent, this.#mainContainer);
     }
 
@@ -103,7 +100,7 @@ export default class FilmsPresenter {
 
     render(this.#allMoviesListComponent, this.#filmsComponent.element);
 
-    if (this.#isFilmsEmpty) {
+    if (!this.#films.length) {
       render(this.#filmsListEmptyComponent, this.#allMoviesListComponent.element);
       return;
     }
@@ -139,7 +136,7 @@ export default class FilmsPresenter {
   }
 
   #initComponents() {
-    if (this.#isFilmsEmpty) {
+    if (!this.#films.length) {
       return;
     }
 
