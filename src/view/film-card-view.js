@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import dayjs from 'dayjs';
 import {MAX_LENGTH_DESCRIPTION_FILM} from '../const';
 
@@ -102,27 +102,70 @@ const createFilmCardTemplate = (film) => {
   );
 };
 
-export default class FilmCardView {
-  #element = null;
+export default class FilmCardView extends AbstractView {
   #film = null;
 
+  #addToWatchlistButton = null;
+  #markAsWatchedButton = null;
+  #markAsFavoriteButton = null;
+
+  #isControlButton = false;
+
   constructor(film) {
+    super();
     this.#film = film;
+
+    this.#addToWatchlistButton = this.element.querySelector('.film-card__controls-item.film-card__controls-item--add-to-watchlist');
+    this.#markAsWatchedButton = this.element.querySelector('.film-card__controls-item.film-card__controls-item--mark-as-watched');
+    this.#markAsFavoriteButton = this.element.querySelector('.film-card__controls-item.film-card__controls-item--favorite');
   }
 
   get template() {
     return createFilmCardTemplate(this.#film);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
+  setFilmCardClickHandler = (callback) => {
+    this._callback.filmCardClick = callback;
+    this.element.addEventListener('click', this.#filmCardClickHandler);
+  };
+
+  setAddToWatchlistButtonClickHandler = (callback) => {
+    this._callback.addToWatchlistButtonClick = callback;
+    this.#addToWatchlistButton.addEventListener('click', this.#addToWatchlistButtonClickHandler);
+  };
+
+  setMarkAsWatchedButtonClickHandler = (callback) => {
+    this._callback.markAsWatchedButtonClick = callback;
+    this.#markAsWatchedButton.addEventListener('click', this.#markAsWatchedButtonClickHandler);
+  };
+
+  setMarkAsFavoriteButtonClickHandler = (callback) => {
+    this._callback.markAsFavoriteButtonClick = callback;
+    this.#markAsFavoriteButton.addEventListener('click', this.#markAsFavoriteButtonClickHandler);
+  };
+
+  #filmCardClickHandler = (evt) => {
+    evt.preventDefault();
+
+    this.#isControlButton = evt.target.classList.contains('film-card__controls-item');
+
+    if (!this.#isControlButton) {
+      this._callback.filmCardClick();
     }
+  };
 
-    return this.#element;
-  }
+  #addToWatchlistButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.addToWatchlistButtonClick();
+  };
 
-  removeElement() {
-    this.#element = null;
-  }
+  #markAsWatchedButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.markAsWatchedButtonClick();
+  };
+
+  #markAsFavoriteButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.markAsFavoriteButtonClick();
+  };
 }

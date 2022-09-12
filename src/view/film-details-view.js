@@ -1,5 +1,5 @@
-import { createElement } from '../render.js';
 import dayjs from 'dayjs';
+import AbstractView from '../framework/view/abstract-view.js';
 
 /**
  * Шаблон блока с постером фильма
@@ -342,29 +342,31 @@ const createFilmDetailsTemplate = (film, comments) => {
   `);
 };
 
-export default class FilmDetailsView {
-  #element = null;
+export default class FilmDetailsView extends AbstractView {
   #film = null;
   #comments = null;
 
+  #closeButton = null;
+
   constructor(film, comments) {
+    super();
     this.#film = film;
     this.#comments = comments;
+
+    this.#closeButton = this.element.querySelector('.film-details__close-btn');
   }
 
   get template() {
     return createFilmDetailsTemplate(this.#film, this.#comments);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
+  setCloseButtonClickHandler = (callback) => {
+    this._callback.closeButtonClick = callback;
+    this.#closeButton.addEventListener('click', this.#closeButtonClickHandler);
+  };
 
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
+  #closeButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.closeButtonClick();
+  };
 }
