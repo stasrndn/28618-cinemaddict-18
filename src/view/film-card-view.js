@@ -1,4 +1,4 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractView from '../framework/view/abstract-view';
 import dayjs from 'dayjs';
 import {MAX_LENGTH_DESCRIPTION_FILM} from '../const';
 
