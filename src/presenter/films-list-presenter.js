@@ -58,6 +58,15 @@ export default class FilmsListPresenter {
   #detailPresenter = null;
 
   /**
+   * Конфигурация для настройки компонентов
+   * @type {{isMain: boolean, title: string}}
+   */
+  #config = {
+    isMain: false,
+    title: ''
+  };
+
+  /**
    * Конструктор films-list презентера
    */
   constructor(container, filmsContainer) {
@@ -65,6 +74,11 @@ export default class FilmsListPresenter {
     this.#filmsContainer = filmsContainer;
   }
 
+  /**
+   * Инициализация презентера
+   * @param filmsData
+   * @param commentsData
+   */
   init = (filmsData, commentsData) => {
     this.#filmsData = filmsData;
     this.#commentsData = commentsData;
@@ -77,10 +91,18 @@ export default class FilmsListPresenter {
   };
 
   /**
+   * Установка конфигурации презентера
+   * @param config
+   */
+  setConfig = (config = {}) => {
+    this.#config = Object.keys(config).length ? config : this.#config;
+  };
+
+  /**
    * Отрисовка компонента оболочки списка фильма
    */
   #renderFilmsListComponent = () => {
-    this.#filmsListComponent = new FilmsListView();
+    this.#filmsListComponent = new FilmsListView(this.#config);
     render(this.#filmsListComponent, this.#filmsContainer);
   };
 
@@ -88,7 +110,7 @@ export default class FilmsListPresenter {
    * Отрисовка компонента заголовка списка
    */
   #renderFilmsListTitleComponent = () => {
-    const filmsListTitleComponent = new FilmsListTitleView();
+    const filmsListTitleComponent = new FilmsListTitleView(this.#config);
     render(filmsListTitleComponent, this.#filmsListComponent.element);
   };
 

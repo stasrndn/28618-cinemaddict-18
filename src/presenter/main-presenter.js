@@ -126,6 +126,12 @@ export default class MainPresenter {
    */
   #renderAllFilms = () => {
     const filmsListPresenter = new FilmsListPresenter(this.#container, this.#filmsComponent.element);
+    const config = {
+      isMain: true,
+      title: '',
+    };
+
+    filmsListPresenter.setConfig(config);
     filmsListPresenter.init(this.#filmsData, this.#commentsData);
   };
 }
