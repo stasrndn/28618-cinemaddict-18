@@ -7,17 +7,10 @@ import {render} from '../framework/render';
 
 export default class MainPresenter {
   /**
-   * Ссылка на контейнер main презентера.
-   * Контейнер будет доступен во всех вложенных презентерах
+   * Контейнер документа (body)
    * @type {null}
    */
-  static container = null;
-
-  /**
-   * Ссылка на презентер всплывающего окна
-   * @type {null}
-   */
-  static filmDetailPresenter = null;
+  #container = null;
 
   /**
    * Контейнер контентной области (main)
@@ -75,9 +68,8 @@ export default class MainPresenter {
    * @param commentsModel
    */
   constructor(container, filmsModel, commentsModel) {
-    MainPresenter.container = container;
-
-    this.#mainContainer = MainPresenter.container.querySelector('.main');
+    this.#container = container;
+    this.#mainContainer = this.#container.querySelector('.main');
 
     this.#filmsModel = filmsModel;
     this.#commentsModel = commentsModel;
@@ -133,7 +125,7 @@ export default class MainPresenter {
    * Отрисовка всех фильмов
    */
   #renderAllFilms = () => {
-    const filmsListPresenter = new FilmsListPresenter(this.#filmsComponent.element, this.#filmsData, this.#commentsData);
-    filmsListPresenter.init();
+    const filmsListPresenter = new FilmsListPresenter(this.#container, this.#filmsComponent.element);
+    filmsListPresenter.init(this.#filmsData, this.#commentsData);
   };
 }

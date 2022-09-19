@@ -1,8 +1,13 @@
 import FilmDetailsView from '../view/film-details-view';
-import MainPresenter from './main-presenter';
 import {render} from '../framework/render';
 
 export default class FilmDetailPresenter {
+  /**
+   * Контейнер документа (body)
+   * @type {null}
+   */
+  #container = null;
+
   /**
    * Объект с данными фильма
    * @type {null}
@@ -21,14 +26,8 @@ export default class FilmDetailPresenter {
    */
   #filmDetailsComponent = null;
 
-  /**
-   * Контейнер main презентера
-   * @type {null}
-   */
-  #rootContainer = null;
-
-  constructor() {
-    this.#rootContainer = MainPresenter.container;
+  constructor(container) {
+    this.#container = container;
   }
 
   /**
@@ -48,7 +47,7 @@ export default class FilmDetailPresenter {
    */
   destroy = () => {
     if (this.#filmDetailsComponent !== null) {
-      this.#rootContainer.querySelector('.film-details').remove();
+      this.#container.querySelector('.film-details').remove();
       this.#filmDetailsComponent = null;
     }
   };
@@ -60,9 +59,7 @@ export default class FilmDetailPresenter {
     this.#filmDetailsComponent = new FilmDetailsView(this.#film, this.#comments);
     this.#filmDetailsComponent.setCloseButtonClickHandler(this.#onClickCloseButton);
 
-    render(this.#filmDetailsComponent, this.#rootContainer);
-
-    MainPresenter.filmDetailPresenter = this;
+    render(this.#filmDetailsComponent, this.#container);
   };
 
   /**

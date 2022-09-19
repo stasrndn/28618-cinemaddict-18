@@ -1,6 +1,4 @@
 import FilmCardView from '../view/film-card-view';
-import FilmDetailPresenter from './film-detail-presenter';
-import MainPresenter from './main-presenter';
 import {render} from '../framework/render';
 
 export default class FilmCardPresenter {
@@ -9,6 +7,8 @@ export default class FilmCardPresenter {
    * @type {null}
    */
   #filmsListContainer = null;
+
+  #filmCardClickHandler = null;
 
   /**
    * Компонент карточки фильма
@@ -28,8 +28,9 @@ export default class FilmCardPresenter {
    */
   #comments = null;
 
-  constructor(filmsListContainer) {
+  constructor(filmsListContainer, filmCardClickHandler) {
     this.#filmsListContainer = filmsListContainer;
+    this.#filmCardClickHandler = filmCardClickHandler;
   }
 
   /**
@@ -55,10 +56,7 @@ export default class FilmCardPresenter {
    * Обработчик клика на карточке фильма
    */
   #onClickFilmCard = () => {
-    MainPresenter.filmDetailPresenter?.destroy();
-
-    const filmDetailPresenter = new FilmDetailPresenter();
-    filmDetailPresenter.init(this.#film, this.#comments);
+    this.#filmCardClickHandler(this.#film, this.#comments);
   };
 
   /**
