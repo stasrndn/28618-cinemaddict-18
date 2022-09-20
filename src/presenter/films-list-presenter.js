@@ -5,7 +5,7 @@ import FilmCardPresenter from './film-card-presenter';
 import FilmDetailPresenter from './film-detail-presenter';
 import FilmsListShowMoreButtonView from '../view/films-list-show-more-button-view';
 import {FILM_COUNT_PER_STEP} from '../const';
-import {render} from '../framework/render';
+import {remove, render} from '../framework/render';
 import {isEscapeKey} from '../utils';
 
 export default class FilmsListPresenter {
@@ -80,6 +80,12 @@ export default class FilmsListPresenter {
   #filmDetailPresenter = null;
 
   /**
+   * Счётчик отрисованных фильмов
+   * @type {number}
+   */
+  #renderedFilmCount = FILM_COUNT_PER_STEP;
+
+  /**
    * Конструктор films-list презентера
    */
   constructor(container, filmsContainer) {
@@ -140,6 +146,7 @@ export default class FilmsListPresenter {
    */
   #renderFilmsListShowMoreButtonComponent = () => {
     this.#filmsListShowMoreButtonComponent = new FilmsListShowMoreButtonView();
+    this.#filmsListShowMoreButtonComponent.setClickHandler(this.#handleFilmsListShowMoreButton);
     render(this.#filmsListShowMoreButtonComponent, this.#filmsListComponent.element);
   };
 
@@ -185,6 +192,18 @@ export default class FilmsListPresenter {
   };
 
   /**
+   * Обработчик кнопки "Показать ещё"
+   */
+  #handleFilmsListShowMoreButton = () => {
+    this.#renderFilms(this.#renderedFilmCount, this.#renderedFilmCount + FILM_COUNT_PER_STEP);
+    this.#renderedFilmCount += FILM_COUNT_PER_STEP;
+
+    if (this.#renderedFilmCount >= this.#filmsData.length) {
+      remove(this.#filmsListShowMoreButtonComponent);
+    }
+  };
+
+  /**
    * Удаляет открытое всплывающее окно
    */
   #clearDetailPresenter = () => {
@@ -212,10 +231,14 @@ export default class FilmsListPresenter {
    * Отрисовка списка фильмов
    */
   #renderFilmList = () => {
-    this.#renderFilms(0, Math.min(this.#filmsData.length, FILM_COUNT_PER_STEP));
+    if (this.#config.isMain) {
+      this.#renderFilms(0, Math.min(this.#filmsData.length, FILM_COUNT_PER_STEP));
 
-    if (this.#filmsData.length > FILM_COUNT_PER_STEP) {
-      this.#renderFilmsListShowMoreButtonComponent();
+      if (this.#filmsData.length > FILM_COUNT_PER_STEP) {
+        this.#renderFilmsListShowMoreButtonComponent();
+      }
+    } else {
+      this.#renderFilms(0, 2);
     }
   };
 

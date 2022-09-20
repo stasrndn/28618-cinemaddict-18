@@ -95,6 +95,8 @@ export default class MainPresenter {
     this.#renderFilmsComponent();
 
     this.#renderAllFilms();
+    this.#renderTopRatedFilms();
+    this.#renderMostCommentedFilms();
   };
 
   /**
@@ -129,6 +131,36 @@ export default class MainPresenter {
     const config = {
       isMain: true,
       title: '',
+    };
+
+    filmsListPresenter.setConfig(config);
+    filmsListPresenter.init(this.#filmsData, this.#commentsData);
+  };
+
+  /**
+   * Временная реализация вывода
+   * фильмов с наибольшим рейтингом
+   */
+  #renderTopRatedFilms = () => {
+    const filmsListPresenter = new FilmsListPresenter(this.#container, this.#filmsComponent.element);
+    const config = {
+      isMain: false,
+      title: 'Top rated',
+    };
+
+    filmsListPresenter.setConfig(config);
+    filmsListPresenter.init(this.#filmsData, this.#commentsData);
+  };
+
+  /**
+   * Временная реализация вывода
+   * фильмов с наибольшим количеством комментариев
+   */
+  #renderMostCommentedFilms = () => {
+    const filmsListPresenter = new FilmsListPresenter(this.#container, this.#filmsComponent.element);
+    const config = {
+      isMain: false,
+      title: 'Most commented',
     };
 
     filmsListPresenter.setConfig(config);
