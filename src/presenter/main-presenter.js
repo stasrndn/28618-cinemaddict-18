@@ -1,9 +1,9 @@
 import MainNavigationView from '../view/main-navigation-view';
 import SortFilterView from '../view/sort-filter-view';
-import FilmsListEmptyView from '../view/films-list-empty-view';
-import FilmsView from '../view/films-view';
+
 import FilmsPresenter from './films-presenter';
 import FilmsListPresenter from './films-list-presenter';
+import FilmsEmptyPresenter from './films-empty-presenter';
 import {render} from '../framework/render';
 
 export default class MainPresenter {
@@ -83,15 +83,14 @@ export default class MainPresenter {
     this.#filmsData = [...this.#filmsModel.films];
     this.#commentsData = [...this.#commentsModel.comments];
 
-    this.#renderMainNavigationComponent();
-
     if (!this.#filmsData.length) {
-      const filmsListEmptyComponent = new FilmsListEmptyView();
-      render(filmsListEmptyComponent, this.#mainContainer);
+      const filmsListEmptyPresenter = new FilmsEmptyPresenter(this.#mainContainer);
+      filmsListEmptyPresenter.init();
 
       return;
     }
 
+    this.#renderMainNavigationComponent();
     this.#renderSortFilterComponent();
 
     this.#initPresenters();
