@@ -2,6 +2,7 @@ import MainNavigationView from '../view/main-navigation-view';
 import SortFilterView from '../view/sort-filter-view';
 import FilmsListEmptyView from '../view/films-list-empty-view';
 import FilmsView from '../view/films-view';
+import FilmsPresenter from './films-presenter';
 import FilmsListPresenter from './films-list-presenter';
 import {render} from '../framework/render';
 
@@ -92,11 +93,21 @@ export default class MainPresenter {
     }
 
     this.#renderSortFilterComponent();
-    this.#renderFilmsComponent();
+
+    this.#initPresenters();
 
     this.#renderAllFilms();
     this.#renderTopRatedFilms();
     this.#renderMostCommentedFilms();
+  };
+
+  /**
+   * Инициализация соседних презентеров
+   */
+  #initPresenters = () => {
+    const filmsPresenter = new FilmsPresenter(this.#mainContainer);
+    filmsPresenter.init();
+    this.#filmsComponent = filmsPresenter.filmsComponent;
   };
 
   /**
@@ -113,14 +124,6 @@ export default class MainPresenter {
   #renderSortFilterComponent = () => {
     this.#sortFilterComponent = new SortFilterView();
     render(this.#sortFilterComponent, this.#mainContainer);
-  };
-
-  /**
-   * Отрисовка компонента отображения всех списков фильмов
-   */
-  #renderFilmsComponent = () => {
-    this.#filmsComponent = new FilmsView();
-    render(this.#filmsComponent, this.#mainContainer);
   };
 
   /**
