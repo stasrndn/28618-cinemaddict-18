@@ -1,10 +1,8 @@
-import MainNavigationView from '../view/main-navigation-view';
-import SortFilterView from '../view/sort-filter-view';
-
+import MainNavigationPresenter from './main-navigation-presenter';
+import SortPresenter from './sort-presenter';
 import FilmsPresenter from './films-presenter';
 import FilmsListPresenter from './films-list-presenter';
 import FilmsEmptyPresenter from './films-empty-presenter';
-import {render} from '../framework/render';
 
 export default class MainPresenter {
   /**
@@ -44,18 +42,6 @@ export default class MainPresenter {
   #commentsData = [];
 
   /**
-   * Компонент главной навигации
-   * @type {null}
-   */
-  #mainNavigationComponent = null;
-
-  /**
-   * Компонент блока сортировки
-   * @type {null}
-   */
-  #sortFilterComponent = null;
-
-  /**
    * Компонент для отображения списков фильмов.
    * Является контейнером для всех списков фильмов
    * @type {null}
@@ -64,13 +50,13 @@ export default class MainPresenter {
 
   /**
    * Конструктор main презентера
-   * @param container
+   * @param containers
    * @param filmsModel
    * @param commentsModel
    */
-  constructor(container, filmsModel, commentsModel) {
-    this.#container = container;
-    this.#mainContainer = this.#container.querySelector('.main');
+  constructor(containers, filmsModel, commentsModel) {
+    this.#container = containers.container;
+    this.#mainContainer = containers.mainContainer;
 
     this.#filmsModel = filmsModel;
     this.#commentsModel = commentsModel;
@@ -83,16 +69,6 @@ export default class MainPresenter {
     this.#filmsData = [...this.#filmsModel.films];
     this.#commentsData = [...this.#commentsModel.comments];
 
-    if (!this.#filmsData.length) {
-      const filmsListEmptyPresenter = new FilmsEmptyPresenter(this.#mainContainer);
-      filmsListEmptyPresenter.init();
-
-      return;
-    }
-
-    this.#renderMainNavigationComponent();
-    this.#renderSortFilterComponent();
-
     this.#initPresenters();
 
     this.#renderAllFilms();
@@ -104,25 +80,22 @@ export default class MainPresenter {
    * Инициализация соседних презентеров
    */
   #initPresenters = () => {
+    if (!this.#filmsData.length) {
+      const filmsListEmptyPresenter = new FilmsEmptyPresenter(this.#mainContainer);
+      filmsListEmptyPresenter.init();
+
+      return;
+    }
+
+    const mainNavigationPresenter = new MainNavigationPresenter(this.#mainContainer);
+    mainNavigationPresenter.init();
+
+    const sortPresenter = new SortPresenter(this.#mainContainer);
+    sortPresenter.init();
+
     const filmsPresenter = new FilmsPresenter(this.#mainContainer);
     filmsPresenter.init();
     this.#filmsComponent = filmsPresenter.filmsComponent;
-  };
-
-  /**
-   * Отрисовка компонента главной навигации
-   */
-  #renderMainNavigationComponent = () => {
-    this.#mainNavigationComponent = new MainNavigationView();
-    render(this.#mainNavigationComponent, this.#mainContainer);
-  };
-
-  /**
-   * Отрисовка компонента блока сортировки
-   */
-  #renderSortFilterComponent = () => {
-    this.#sortFilterComponent = new SortFilterView();
-    render(this.#sortFilterComponent, this.#mainContainer);
   };
 
   /**
