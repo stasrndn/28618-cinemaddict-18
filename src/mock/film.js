@@ -439,4 +439,10 @@ export const generateFilm = (comments, _, index) => ({
     genre: genres[index],
     description: generateDescription(),
   },
+  userDetails: {
+    watchlist: Boolean(getRandomInteger()),
+    alreadyWatched: Boolean(getRandomInteger()),
+    watchingDate: null,
+    favorite: Boolean(getRandomInteger()),
+  },
 });
