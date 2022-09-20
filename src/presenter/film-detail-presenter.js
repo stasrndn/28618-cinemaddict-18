@@ -1,6 +1,5 @@
 import FilmDetailsView from '../view/film-details-view';
 import {render, replace} from '../framework/render';
-import FilmCardView from '../view/film-card-view';
 
 export default class FilmDetailPresenter {
   /**
