@@ -67,6 +67,19 @@ export default class FilmsListPresenter {
   };
 
   /**
+   * Хранилище карточек фильмов
+   * @type {*}
+   */
+  #filmCardPresenter = new Map();
+
+  /**
+   * Хранилище инстанса презентера
+   * всплывающего окна
+   * @type {null}
+   */
+  #filmDetailPresenter = null;
+
+  /**
    * Конструктор films-list презентера
    */
   constructor(container, filmsContainer) {
@@ -135,8 +148,10 @@ export default class FilmsListPresenter {
    * @param film
    */
   #renderFilm = (film) => {
-    const filmCardPresenter = new FilmCardPresenter(this.#filmsListContainerComponent.element, this.#handleFilmCardClick);
+    const filmsListContainerComponent = this.#filmsListContainerComponent.element;
+    const filmCardPresenter = new FilmCardPresenter(filmsListContainerComponent, this.#handleFilmCardClick, this.#handleFilmChange);
     filmCardPresenter.init(film, this.#commentsData);
+    this.#filmCardPresenter.set(film.id, filmCardPresenter);
   };
 
   /**
@@ -147,12 +162,26 @@ export default class FilmsListPresenter {
   #handleFilmCardClick = (film, comments) => {
     this.#clearDetailPresenter();
 
-    const filmDetailPresenter = new FilmDetailPresenter(this.#container);
+    const filmDetailPresenter = new FilmDetailPresenter(this.#container, this.#handleFilmChange);
     filmDetailPresenter.init(film, comments);
 
     this.#container.addEventListener('keydown', this.#onEscapeKeydown);
     this.#container.classList.add('hide-overflow');
     this.#detailPresenter = filmDetailPresenter;
+
+    this.#filmDetailPresenter = filmDetailPresenter;
+  };
+
+  /**
+   * Обработчик изменения фильма
+   * @param updatedFilm
+   */
+  #handleFilmChange = (updatedFilm) => {
+    this.#filmCardPresenter.get(updatedFilm.id).rerender(updatedFilm);
+
+    if (this.#filmDetailPresenter !== null) {
+      this.#filmDetailPresenter.rerender(updatedFilm);
+    }
   };
 
   /**
@@ -161,6 +190,7 @@ export default class FilmsListPresenter {
   #clearDetailPresenter = () => {
     if (this.#detailPresenter !== null) {
       this.#detailPresenter.destroy();
+      this.#filmDetailPresenter = null;
 
       this.#container.removeEventListener('keydown', this.#onEscapeKeydown);
       this.#container.classList.remove('hide-overflow');

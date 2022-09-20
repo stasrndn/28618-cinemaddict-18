@@ -242,6 +242,8 @@ const createFilmDetailsTemplate = (film, comments) => {
     ageRating,
   } = film.filmInfo;
 
+  const {watchlist, alreadyWatched, favorite} = film.userDetails;
+
   const contentFilmComments = getContentFilmComments(comments, film.comments);
 
   const posterTemplate = createFilmDetailsPosterTemplate(poster);
@@ -296,9 +298,15 @@ const createFilmDetailsTemplate = (film, comments) => {
         </div>
 
         <section class="film-details__controls">
-          <button type="button" class="film-details__control-button film-details__control-button--watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
-          <button type="button" class="film-details__control-button film-details__control-button--active film-details__control-button--watched" id="watched" name="watched">Already watched</button>
-          <button type="button" class="film-details__control-button film-details__control-button--favorite" id="favorite" name="favorite">Add to favorites</button>
+          <button type="button" class="film-details__control-button ${watchlist ? 'film-details__control-button--active' : ''} film-details__control-button--watchlist" id="watchlist" name="watchlist">
+            ${watchlist ? 'Added' : 'Add'} to watchlist
+          </button>
+          <button type="button" class="film-details__control-button ${alreadyWatched ? 'film-details__control-button--active' : ''} film-details__control-button--watched" id="watched" name="watched">
+            ${alreadyWatched ? 'Already watched' : 'Not Viewed'}
+          </button>
+          <button type="button" class="film-details__control-button ${favorite ? 'film-details__control-button--active' : ''} film-details__control-button--favorite" id="favorite" name="favorite">
+            ${favorite ? 'Added' : 'Add'} to favorites
+          </button>
         </section>
       </div>
 
@@ -347,6 +355,9 @@ export default class FilmDetailsView extends AbstractView {
   #comments = null;
 
   #closeButton = null;
+  #watchListButton = null;
+  #watchedButton = null;
+  #favoriteButton = null;
 
   constructor(film, comments) {
     super();
@@ -354,6 +365,9 @@ export default class FilmDetailsView extends AbstractView {
     this.#comments = comments;
 
     this.#closeButton = this.element.querySelector('.film-details__close-btn');
+    this.#watchListButton = this.element.querySelector('#watchlist');
+    this.#watchedButton = this.element.querySelector('#watched');
+    this.#favoriteButton = this.element.querySelector('#favorite');
   }
 
   get template() {
@@ -365,8 +379,38 @@ export default class FilmDetailsView extends AbstractView {
     this.#closeButton.addEventListener('click', this.#closeButtonClickHandler);
   };
 
+  setAddToWatchlistButtonClickHandler = (callback) => {
+    this._callback.addToWatchlistButtonClick = callback;
+    this.#watchListButton.addEventListener('click', this.#addToWatchlistButtonClickHandler);
+  };
+
+  setMarkAsWatchedButtonClickHandler = (callback) => {
+    this._callback.markAsWatchedButtonClick = callback;
+    this.#watchedButton.addEventListener('click', this.#markAsWatchedButtonClickHandler);
+  };
+
+  setMarkAsFavoriteButtonClickHandler = (callback) => {
+    this._callback.markAsFavoriteButtonClick = callback;
+    this.#favoriteButton.addEventListener('click', this.#markAsFavoriteButtonClickHandler);
+  };
+
   #closeButtonClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.closeButtonClick();
+  };
+
+  #addToWatchlistButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.addToWatchlistButtonClick();
+  };
+
+  #markAsWatchedButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.markAsWatchedButtonClick();
+  };
+
+  #markAsFavoriteButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.markAsFavoriteButtonClick();
   };
 }

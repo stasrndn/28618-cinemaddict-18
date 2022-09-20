@@ -69,8 +69,8 @@ const createFilmCardGenreTemplate = (genre) => (
  */
 const createFilmCardTemplate = (film) => {
 
-  const {id} = film;
   const {title, totalRating, description, poster, release, runtime, genre} = film.filmInfo;
+  const {watchlist, alreadyWatched, favorite} = film.userDetails;
 
   const posterTemplate = createFilmCardPosterTemplate(poster);
   const descriptionTemplate = createFilmCardDescriptionTemplate(description);
@@ -80,7 +80,7 @@ const createFilmCardTemplate = (film) => {
   const genreTemplate = createFilmCardGenreTemplate(genre);
 
   return (
-    `<article class="film-card" data-id="${id}">
+    `<article class="film-card">
       <a class="film-card__link">
         <h3 class="film-card__title">${title}</h3>
         <p class="film-card__rating">${totalRating}</p>
@@ -94,9 +94,9 @@ const createFilmCardTemplate = (film) => {
         ${commentsTemplate}
       </a>
       <div class="film-card__controls">
-        <button class="film-card__controls-item film-card__controls-item--add-to-watchlist" type="button">Add to watchlist</button>
-        <button class="film-card__controls-item film-card__controls-item--mark-as-watched" type="button">Mark as watched</button>
-        <button class="film-card__controls-item film-card__controls-item--favorite" type="button">Mark as favorite</button>
+        <button class="film-card__controls-item ${watchlist ? 'film-card__controls-item--active' : ''} film-card__controls-item--add-to-watchlist" type="button">Add to watchlist</button>
+        <button class="film-card__controls-item ${alreadyWatched ? 'film-card__controls-item--active' : ''} film-card__controls-item--mark-as-watched" type="button">Mark as watched</button>
+        <button class="film-card__controls-item ${favorite ? 'film-card__controls-item--active' : ''} film-card__controls-item--favorite" type="button">Mark as favorite</button>
       </div>
     </article>`
   );

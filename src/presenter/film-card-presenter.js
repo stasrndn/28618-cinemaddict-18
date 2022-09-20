@@ -1,5 +1,5 @@
 import FilmCardView from '../view/film-card-view';
-import {render} from '../framework/render';
+import {render, replace} from '../framework/render';
 
 export default class FilmCardPresenter {
   /**
@@ -8,7 +8,17 @@ export default class FilmCardPresenter {
    */
   #filmsListContainer = null;
 
+  /**
+   * Обработчик клика по карточке фильма
+   * @type {null}
+   */
   #filmCardClickHandler = null;
+
+  /**
+   * Обработчик изменения фильма
+   * @type {null}
+   */
+  #filmChangeHandler = null;
 
   /**
    * Компонент карточки фильма
@@ -28,9 +38,10 @@ export default class FilmCardPresenter {
    */
   #comments = null;
 
-  constructor(filmsListContainer, filmCardClickHandler) {
+  constructor(filmsListContainer, filmCardClickHandler, filmChangeHandler) {
     this.#filmsListContainer = filmsListContainer;
     this.#filmCardClickHandler = filmCardClickHandler;
+    this.#filmChangeHandler = filmChangeHandler;
   }
 
   /**
@@ -53,6 +64,23 @@ export default class FilmCardPresenter {
   };
 
   /**
+   * Перерисовывает карточку фильма
+   * @param updatedFilm
+   */
+  rerender = (updatedFilm) => {
+    const updatedFilmCardComponent = new FilmCardView(updatedFilm);
+
+    updatedFilmCardComponent.setFilmCardClickHandler(this.#onClickFilmCard);
+    updatedFilmCardComponent.setAddToWatchlistButtonClickHandler(this.#onClickAddToWatchlistButton);
+    updatedFilmCardComponent.setMarkAsWatchedButtonClickHandler(this.#onClickMarkAsWatchedButton);
+    updatedFilmCardComponent.setMarkAsFavoriteButtonClickHandler(this.#onClickMarkAsFavoriteButton);
+
+    replace(updatedFilmCardComponent, this.#filmCardComponent);
+
+    this.#filmCardComponent = updatedFilmCardComponent;
+  };
+
+  /**
    * Обработчик клика на карточке фильма
    */
   #onClickFilmCard = () => {
@@ -63,20 +91,23 @@ export default class FilmCardPresenter {
    * Обработчик клика на кнопке "Добавить в список просмотра"
    */
   #onClickAddToWatchlistButton = () => {
-    console.log('onClickAddToWatchlistButton');
+    this.#film.userDetails.watchlist = !this.#film.userDetails.watchlist;
+    this.#filmChangeHandler(this.#film);
   };
 
   /**
    * Обработчик клика на кнопке "Пометить просмотренным"
    */
   #onClickMarkAsWatchedButton = () => {
-    console.log('onClickMarkAsWatchedButton');
+    this.#film.userDetails.alreadyWatched = !this.#film.userDetails.alreadyWatched;
+    this.#filmChangeHandler(this.#film);
   };
 
   /**
    * Обработчик клика на кнопке "Добавить в избранное"
    */
   #onClickMarkAsFavoriteButton = () => {
-    console.log('onClickMarkAsFavoriteButton');
+    this.#film.userDetails.favorite = !this.#film.userDetails.favorite;
+    this.#filmChangeHandler(this.#film);
   };
 }
