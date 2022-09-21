@@ -1,5 +1,5 @@
 import MainNavigationView from '../view/main-navigation-view';
-import {render} from '../framework/render';
+import {render, RenderPosition} from '../framework/render';
 
 export default class MainNavigationPresenter {
   /**
@@ -18,6 +18,6 @@ export default class MainNavigationPresenter {
 
   #renderMainNavigationComponent = () => {
     const mainNavigationComponent = new MainNavigationView();
-    render(mainNavigationComponent, this.#container);
+    render(mainNavigationComponent, this.#container, RenderPosition.AFTERBEGIN);
   };
 }

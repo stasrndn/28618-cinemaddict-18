@@ -1,5 +1,5 @@
 import FilmCardView from '../view/film-card-view';
-import {render, replace} from '../framework/render';
+import {remove, render, replace} from '../framework/render';
 
 export default class FilmCardPresenter {
   /**
@@ -78,6 +78,15 @@ export default class FilmCardPresenter {
     replace(updatedFilmCardComponent, this.#filmCardComponent);
 
     this.#filmCardComponent = updatedFilmCardComponent;
+  };
+
+  /**
+   * Удаляет компонент:
+   * - удаление экземпляра
+   * - удаление представления из DOM-дерева
+   */
+  destroy = () => {
+    remove(this.#filmCardComponent);
   };
 
   /**

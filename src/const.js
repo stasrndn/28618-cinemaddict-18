@@ -1,4 +1,14 @@
 /**
+ * Тип сортировки списка
+ * @type {{DATE: string, RATING: string, DEFAULT: string}}
+ */
+const SortType = {
+  DEFAULT: 'default',
+  DATE: 'date',
+  RATING: 'rating',
+};
+
+/**
  * Максимальное количество фильмов,
  * отдаваемых моделью
  * @type {number}
@@ -38,6 +48,12 @@ const MAX_PAST_COMMENT_YEAR = 5;
 const ESCAPE_KEY = 'Escape';
 
 /**
+ * Наименование тега ссылки
+ * @type {string}
+ */
+const TAG_NAME_LINK = 'A';
+
+/**
  * Наименование клавиши Esc
  * @type {string}
  */
@@ -62,12 +78,14 @@ const ID_SIZE = 10;
 const FILM_COUNT_PER_STEP = 5;
 
 export {
+  SortType,
   MAX_FILMS_COUNT,
   MAX_COMMENTS_COUNT,
   MAX_FILM_COMMENT_COUNT,
   MAX_LENGTH_DESCRIPTION_FILM,
   MAX_PAST_COMMENT_YEAR,
   ESCAPE_KEY,
+  TAG_NAME_LINK,
   ESC_KEY,
   ID_VALID_SYMBOLS,
   ID_SIZE,
