@@ -1,4 +1,4 @@
-import {ESC_KEY, ESCAPE_KEY, ID_SIZE, ID_VALID_SYMBOLS} from './const.js';
+import {ESC_KEY, ESCAPE_KEY, TAG_NAME_LINK, ID_SIZE, ID_VALID_SYMBOLS} from './const.js';
 import {customAlphabet} from 'nanoid';
 
 /**
@@ -37,6 +37,13 @@ const getRandomFloat = (a, b, digits = 1) => {
 const isEscapeKey = (evt) => (evt.key === ESCAPE_KEY || evt.key === ESC_KEY);
 
 /**
+ * Возвращает true, если был произведен клик по ссылке
+ * @param evt
+ * @returns {boolean}
+ */
+const isLinkClicked = (evt) => (evt.target.tagName === TAG_NAME_LINK);
+
+/**
  * Генерирует случайный идентификатор
  * @param alphabet - допустимые символы идентификатора
  * @param size - длина идентификатора
@@ -63,5 +70,6 @@ export {
   getRandomInteger,
   getRandomFloat,
   isEscapeKey,
+  isLinkClicked,
   generateId,
 };

@@ -14,6 +14,4 @@ export default class FilmsModel {
   get films() {
     return this.#films;
   }
-
-  getFilmById = (id) => this.#films.find((film) => film.id === id);
 }

@@ -4,9 +4,12 @@ import FilmsListContainerView from '../view/films-list-container-view';
 import FilmCardPresenter from './film-card-presenter';
 import FilmDetailPresenter from './film-detail-presenter';
 import FilmsListShowMoreButtonView from '../view/films-list-show-more-button-view';
-import {FILM_COUNT_PER_STEP} from '../const';
+import MainNavigationPresenter from './main-navigation-presenter';
+import SortPresenter from './sort-presenter';
+import {FILM_COUNT_PER_STEP, SortType} from '../const';
 import {remove, render} from '../framework/render';
 import {isEscapeKey} from '../utils';
+import {sortByDateRelease, sortByRating} from '../utils/film';
 
 export default class FilmsListPresenter {
   /**
@@ -14,6 +17,12 @@ export default class FilmsListPresenter {
    * @type {null}
    */
   #container = null;
+
+  /**
+   * Контейнер контентной области (main)
+   * @type {null}
+   */
+  #mainContainer = null;
 
   /**
    * Контейнер для отображения списка фильмов
@@ -26,6 +35,12 @@ export default class FilmsListPresenter {
    * @type {[]}
    */
   #filmsData = [];
+
+  /**
+   * Массив для хранения исходного порядка фильмов
+   * @type {[]}
+   */
+  #sourcesFilmsData = [];
 
   /**
    * Массив для хранения комментариев
@@ -58,6 +73,12 @@ export default class FilmsListPresenter {
   #detailPresenter = null;
 
   /**
+   * Презентер компонента сортировки
+   * @type {null}
+   */
+  #sortPresenter = null;
+
+  /**
    * Конфигурация для настройки компонентов
    * @type {{isMain: boolean, title: string}}
    */
@@ -86,27 +107,50 @@ export default class FilmsListPresenter {
   #renderedFilmCount = FILM_COUNT_PER_STEP;
 
   /**
+   * Текущий тип сортировки
+   * @type {string}
+   */
+  #currentSortType = SortType.DEFAULT;
+
+  /**
    * Конструктор films-list презентера
    */
-  constructor(container, filmsContainer) {
-    this.#container = container;
-    this.#filmsContainer = filmsContainer;
+  constructor(containers) {
+    this.#container = containers.container;
+    this.#filmsContainer = containers.filmsContainer;
+    this.#mainContainer = containers.mainContainer;
   }
 
   /**
    * Инициализация презентера
-   * @param filmsData
-   * @param commentsData
+   * @param filmsModel
+   * @param commentsModel
    */
-  init = (filmsData, commentsData) => {
-    this.#filmsData = filmsData;
-    this.#commentsData = commentsData;
+  init = (filmsModel, commentsModel) => {
+    this.#filmsData = [...filmsModel.films];
+    this.#sourcesFilmsData = [...filmsModel.films];
+    this.#commentsData = [...commentsModel.comments];
+
+    this.#initPresenters();
 
     this.#renderFilmsListComponent();
     this.#renderFilmsListTitleComponent();
     this.#renderFilmsListContainerComponent();
 
     this.#renderFilmList();
+  };
+
+  /**
+   * Инициализация соседних презентеров
+   */
+  #initPresenters = () => {
+    if (this.#config.isMain) {
+      this.#sortPresenter = new SortPresenter(this.#mainContainer, this.#handleSortTypeChange);
+      this.#sortPresenter.init(this.#currentSortType);
+
+      const mainNavigationPresenter = new MainNavigationPresenter(this.#mainContainer);
+      mainNavigationPresenter.init();
+    }
   };
 
   /**
@@ -122,7 +166,7 @@ export default class FilmsListPresenter {
    */
   #renderFilmsListComponent = () => {
     this.#filmsListComponent = new FilmsListView(this.#config);
-    render(this.#filmsListComponent, this.#filmsContainer);
+    render(this.#filmsListComponent, this.#filmsContainer.element);
   };
 
   /**
@@ -204,6 +248,20 @@ export default class FilmsListPresenter {
   };
 
   /**
+   * Обработчик нажатия ссылки в компоненте сортировки
+   * @param sortType
+   */
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType !== sortType) {
+      this.#sortFilms(sortType);
+      this.#clearFilmList();
+      this.#renderFilmList();
+
+      this.#sortPresenter.rerender(this.#currentSortType);
+    }
+  };
+
+  /**
    * Удаляет открытое всплывающее окно
    */
   #clearDetailPresenter = () => {
@@ -214,6 +272,16 @@ export default class FilmsListPresenter {
       this.#container.removeEventListener('keydown', this.#onEscapeKeydown);
       this.#container.classList.remove('hide-overflow');
     }
+  };
+
+  /**
+   * Очистка списка от карточек фильмов
+   */
+  #clearFilmList = () => {
+    this.#filmCardPresenter.forEach((presenter) => presenter.destroy());
+    this.#filmCardPresenter.clear();
+    this.#renderedFilmCount = FILM_COUNT_PER_STEP;
+    remove(this.#filmsListShowMoreButtonComponent);
   };
 
   /**
@@ -250,6 +318,26 @@ export default class FilmsListPresenter {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
       this.#clearDetailPresenter();
+    }
+  };
+
+  /**
+   * Производит сортировку фильмов в массиве
+   * @param sortType
+   */
+  #sortFilms = (sortType) => {
+    switch (sortType) {
+      case SortType.DATE:
+        this.#filmsData.sort(sortByDateRelease);
+        this.#currentSortType = SortType.DATE;
+        break;
+      case SortType.RATING:
+        this.#filmsData.sort(sortByRating);
+        this.#currentSortType = SortType.RATING;
+        break;
+      default:
+        this.#filmsData = [...this.#sourcesFilmsData];
+        this.#currentSortType = SortType.DEFAULT;
     }
   };
 }

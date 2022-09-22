@@ -1,16 +1,13 @@
-import MainNavigationView from '../view/main-navigation-view';
-import SortFilterView from '../view/sort-filter-view';
-import FilmsListEmptyView from '../view/films-list-empty-view';
-import FilmsView from '../view/films-view';
+import FilmsPresenter from './films-presenter';
 import FilmsListPresenter from './films-list-presenter';
-import {render} from '../framework/render';
+import FilmsEmptyPresenter from './films-empty-presenter';
 
 export default class MainPresenter {
   /**
-   * Контейнер документа (body)
+   * Контейнеры документа (body, main, films)
    * @type {null}
    */
-  #container = null;
+  #containers = null;
 
   /**
    * Контейнер контентной области (main)
@@ -31,45 +28,19 @@ export default class MainPresenter {
   #commentsModel = null;
 
   /**
-   * Массив для хранения списка фильмов
-   * @type {[]}
-   */
-  #filmsData = [];
-
-  /**
-   * Массив для хранения комментариев
-   * @type {[]}
-   */
-  #commentsData = [];
-
-  /**
-   * Компонент главной навигации
-   * @type {null}
-   */
-  #mainNavigationComponent = null;
-
-  /**
-   * Компонент блока сортировки
-   * @type {null}
-   */
-  #sortFilterComponent = null;
-
-  /**
-   * Компонент для отображения списков фильмов.
-   * Является контейнером для всех списков фильмов
-   * @type {null}
-   */
-  #filmsComponent = null;
-
-  /**
    * Конструктор main презентера
-   * @param container
+   * @param containers
    * @param filmsModel
    * @param commentsModel
    */
-  constructor(container, filmsModel, commentsModel) {
-    this.#container = container;
-    this.#mainContainer = this.#container.querySelector('.main');
+  constructor(containers, filmsModel, commentsModel) {
+    this.#mainContainer = containers.mainContainer;
+
+    this.#containers = {
+      container: containers.container,
+      mainContainer: this.#mainContainer,
+      filmsContainer: null,
+    };
 
     this.#filmsModel = filmsModel;
     this.#commentsModel = commentsModel;
@@ -79,62 +50,40 @@ export default class MainPresenter {
    * Инициализация main презентера
    */
   init = () => {
-    this.#filmsData = [...this.#filmsModel.films];
-    this.#commentsData = [...this.#commentsModel.comments];
+    if (![...this.#filmsModel.films].length) {
+      this.#showEmptyMessage();
+    } else {
+      const filmsPresenter = new FilmsPresenter(this.#mainContainer);
+      filmsPresenter.init();
 
-    this.#renderMainNavigationComponent();
+      this.#containers.filmsContainer = filmsPresenter.filmsComponent;
 
-    if (!this.#filmsData.length) {
-      const filmsListEmptyComponent = new FilmsListEmptyView();
-      render(filmsListEmptyComponent, this.#mainContainer);
-
-      return;
+      this.#renderAllFilms();
+      this.#renderTopRatedFilms();
+      this.#renderMostCommentedFilms();
     }
-
-    this.#renderSortFilterComponent();
-    this.#renderFilmsComponent();
-
-    this.#renderAllFilms();
-    this.#renderTopRatedFilms();
-    this.#renderMostCommentedFilms();
   };
 
   /**
-   * Отрисовка компонента главной навигации
+   * Показывает сообщение об отсутствующих фильмах
    */
-  #renderMainNavigationComponent = () => {
-    this.#mainNavigationComponent = new MainNavigationView();
-    render(this.#mainNavigationComponent, this.#mainContainer);
-  };
-
-  /**
-   * Отрисовка компонента блока сортировки
-   */
-  #renderSortFilterComponent = () => {
-    this.#sortFilterComponent = new SortFilterView();
-    render(this.#sortFilterComponent, this.#mainContainer);
-  };
-
-  /**
-   * Отрисовка компонента отображения всех списков фильмов
-   */
-  #renderFilmsComponent = () => {
-    this.#filmsComponent = new FilmsView();
-    render(this.#filmsComponent, this.#mainContainer);
+  #showEmptyMessage = () => {
+    const filmsListEmptyPresenter = new FilmsEmptyPresenter(this.#mainContainer);
+    filmsListEmptyPresenter.init();
   };
 
   /**
    * Отрисовка всех фильмов
    */
   #renderAllFilms = () => {
-    const filmsListPresenter = new FilmsListPresenter(this.#container, this.#filmsComponent.element);
+    const filmsListPresenter = new FilmsListPresenter(this.#containers);
     const config = {
       isMain: true,
       title: '',
     };
 
     filmsListPresenter.setConfig(config);
-    filmsListPresenter.init(this.#filmsData, this.#commentsData);
+    filmsListPresenter.init(this.#filmsModel, this.#commentsModel);
   };
 
   /**
@@ -142,14 +91,14 @@ export default class MainPresenter {
    * фильмов с наибольшим рейтингом
    */
   #renderTopRatedFilms = () => {
-    const filmsListPresenter = new FilmsListPresenter(this.#container, this.#filmsComponent.element);
+    const filmsListPresenter = new FilmsListPresenter(this.#containers);
     const config = {
       isMain: false,
       title: 'Top rated',
     };
 
     filmsListPresenter.setConfig(config);
-    filmsListPresenter.init(this.#filmsData, this.#commentsData);
+    filmsListPresenter.init(this.#filmsModel, this.#commentsModel);
   };
 
   /**
@@ -157,13 +106,13 @@ export default class MainPresenter {
    * фильмов с наибольшим количеством комментариев
    */
   #renderMostCommentedFilms = () => {
-    const filmsListPresenter = new FilmsListPresenter(this.#container, this.#filmsComponent.element);
+    const filmsListPresenter = new FilmsListPresenter(this.#containers);
     const config = {
       isMain: false,
       title: 'Most commented',
     };
 
     filmsListPresenter.setConfig(config);
-    filmsListPresenter.init(this.#filmsData, this.#commentsData);
+    filmsListPresenter.init(this.#filmsModel, this.#commentsModel);
   };
 }
