@@ -9,6 +9,25 @@ const SortType = {
 };
 
 /**
+ * Типы сортировки
+ * @type {[{name: string, type: string},{name: string, type: string},{name: string, type: string}]}
+ */
+const SORT_TYPES = [
+  {
+    name: 'Sort by default',
+    type: 'default',
+  },
+  {
+    name: 'Sort by date',
+    type: 'date',
+  },
+  {
+    name: 'Sort by rating',
+    type: 'rating',
+  }
+];
+
+/**
  * Максимальное количество фильмов,
  * отдаваемых моделью
  * @type {number}
@@ -79,6 +98,7 @@ const FILM_COUNT_PER_STEP = 5;
 
 export {
   SortType,
+  SORT_TYPES,
   MAX_FILMS_COUNT,
   MAX_COMMENTS_COUNT,
   MAX_FILM_COMMENT_COUNT,

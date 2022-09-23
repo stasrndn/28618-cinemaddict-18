@@ -1,14 +1,41 @@
 import AbstractView from '../framework/view/abstract-view';
-import {SortType} from '../const';
+import {SORT_TYPES} from '../const';
 import {isLinkClicked} from '../utils';
 
-const createSortFilterTemplate = (sortType) => (
-  `<ul class="sort">
-    <li><a href="#" class="sort__button ${sortType === SortType.DEFAULT ? 'sort__button--active' : ''}" data-sort-type="${SortType.DEFAULT}">Sort by default</a></li>
-    <li><a href="#" class="sort__button ${sortType === SortType.DATE ? 'sort__button--active' : ''}" data-sort-type="${SortType.DATE}">Sort by date</a></li>
-    <li><a href="#" class="sort__button ${sortType === SortType.RATING ? 'sort__button--active' : ''}" data-sort-type="${SortType.RATING}">Sort by rating</a></li>
-  </ul>`
+/**
+ * Формирование разметки пункта сортировки
+ * @param sortType
+ * @param item
+ * @return {string}
+ */
+const createSortFilterItemTemplate = (sortType, item) => (
+  `<li>
+    <a href="#"
+       class="sort__button ${sortType === item.type ? 'sort__button--active' : ''}"
+       data-sort-type="${item.type}"
+    >
+      ${item.name}
+    </a>
+   </li>
+  `
 );
+
+/**
+ * Формирование разметки списка пунктов сортировки
+ * @param sortType
+ * @returns {string}
+ */
+const createSortFilterTemplate = (sortType) => {
+  const sortFilterItemsTemplate = SORT_TYPES
+    .map((item) => createSortFilterItemTemplate(sortType, item))
+    .join('');
+
+  return `
+    <ul class="sort">
+      ${sortFilterItemsTemplate}
+    </ul>
+  `;
+};
 
 export default class SortFilterView extends AbstractView {
   /**
