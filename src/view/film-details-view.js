@@ -1,4 +1,5 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view';
+import {EMOTIONS_LIST} from '../const';
 import dayjs from 'dayjs';
 
 /**
@@ -204,6 +205,52 @@ const createFilmDetailsCommentsListTemplate = (comments) => (
 );
 
 /**
+ * Шаблон элемента в блоке эмоций в форме добавления комментария
+ * @param item
+ * @param emotion
+ * @returns {string}
+ */
+const createFilmDetailsEmojiListItemTemplate = (item, emotion) => (
+  `
+    <input
+      class="film-details__emoji-item visually-hidden"
+      name="comment-emoji"
+      type="radio"
+      id="emoji-${item}"
+      value="${item}"
+      ${item === emotion ? 'checked' : ''}
+    >
+    <label
+      class="film-details__emoji-label"
+      for="emoji-${item}"
+    >
+      <img
+        src="./images/emoji/${item}.png"
+        width="30" height="30"
+        alt="emoji"
+      >
+    </label>
+  `
+);
+
+/**
+ * Шаблон блока эмоций в форме добавления комментария
+ * @param emotion
+ * @returns {string}
+ */
+const createFilmDetailsEmojiListTemplate = (emotion) => {
+  const filmDetailsEmojiListTemplate = EMOTIONS_LIST
+    .map((item) => createFilmDetailsEmojiListItemTemplate(item, emotion))
+    .join('');
+
+  return `
+    <div class="film-details__emoji-list">
+      ${filmDetailsEmojiListTemplate}
+    </div>
+  `;
+};
+
+/**
  * Возвращает комментарии к выбранному фильму
  * @param comments
  * @param filmCommentsIds
@@ -225,7 +272,7 @@ const getContentFilmComments = (comments, filmCommentsIds) => {
   return selectedComments;
 };
 
-const createFilmDetailsTemplate = (film, comments) => {
+const createFilmDetailsTemplate = (film, comments, state) => {
 
   const {
     poster,
@@ -246,6 +293,8 @@ const createFilmDetailsTemplate = (film, comments) => {
 
   const contentFilmComments = getContentFilmComments(comments, film.comments);
 
+  const emotion = state.emotion ?? null;
+
   const posterTemplate = createFilmDetailsPosterTemplate(poster);
   const totalRatingTemplate = createFilmDetailsTotalRatingTemplate(totalRating);
   const titleTemplate = createFilmDetailsTitleTemplate(title);
@@ -261,6 +310,7 @@ const createFilmDetailsTemplate = (film, comments) => {
   const ageRatingTemplate = createFilmDetailsAgeRatingTemplate(ageRating);
   const commentsTitleTemplate = createFilmDetailsCommentsTitleTemplate(film.comments);
   const commentsListTemplate = createFilmDetailsCommentsListTemplate(contentFilmComments);
+  const emojiListTemplate = createFilmDetailsEmojiListTemplate(emotion);
 
   return (`
     <section class="film-details">
@@ -315,33 +365,15 @@ const createFilmDetailsTemplate = (film, comments) => {
           ${commentsTitleTemplate}
           ${commentsListTemplate}
           <form class="film-details__new-comment" action="" method="get">
-            <div class="film-details__add-emoji-label"></div>
+            <div class="film-details__add-emoji-label">
+              ${emotion !== null ? `<img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">` : ''}
+            </div>
 
             <label class="film-details__comment-label">
               <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
             </label>
 
-            <div class="film-details__emoji-list">
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
-              <label class="film-details__emoji-label" for="emoji-smile">
-                <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
-              </label>
-
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
-              <label class="film-details__emoji-label" for="emoji-sleeping">
-                <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
-              </label>
-
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
-              <label class="film-details__emoji-label" for="emoji-puke">
-                <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
-              </label>
-
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
-              <label class="film-details__emoji-label" for="emoji-angry">
-                <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
-              </label>
-            </div>
+            ${emojiListTemplate}
           </form>
         </section>
       </div>
@@ -350,14 +382,66 @@ const createFilmDetailsTemplate = (film, comments) => {
   `);
 };
 
-export default class FilmDetailsView extends AbstractView {
+export default class FilmDetailsView extends AbstractStatefulView {
+  /**
+   * Данные фильма
+   * @type {null}
+   */
   #film = null;
+
+  /**
+   * Общий список комментариев
+   * @type {null}
+   */
   #comments = null;
 
+  /**
+   * Кнопка закрытия всплывающего окна
+   * @type {null}
+   */
   #closeButton = null;
+
+  /**
+   * Кнопка "Добавить к просмотру"
+   * @type {null}
+   */
   #watchListButton = null;
+
+  /**
+   * Кнопка "Отметить просмотренным"
+   * @type {null}
+   */
   #watchedButton = null;
+
+  /**
+   * Кнопка "Добавить в избранное"
+   * @type {null}
+   */
   #favoriteButton = null;
+
+  /**
+   * Форма добавления нового комментария
+   * @type {null}
+   */
+  #newCommentElement = null;
+
+  /**
+   * Область добавления эмоции в форме комментария
+   * @type {null}
+   */
+  #addEmojiElement = null;
+
+  /**
+   * Поле ввода текста комментария
+   * @type {null}
+   */
+  #commentInputElement = null;
+
+  /**
+   * Радиокнопки эмоций
+   * @type {null}
+   */
+  #emojiItems = null;
 
   constructor(film, comments) {
     super();
@@ -368,49 +452,137 @@ export default class FilmDetailsView extends AbstractView {
     this.#watchListButton = this.element.querySelector('#watchlist');
     this.#watchedButton = this.element.querySelector('#watched');
     this.#favoriteButton = this.element.querySelector('#favorite');
+
+    this.#setFormCommentElements();
+    this.#setInnerHandlers();
   }
 
   get template() {
-    return createFilmDetailsTemplate(this.#film, this.#comments);
+    return createFilmDetailsTemplate(this.#film, this.#comments, this._state);
   }
 
+  /**
+   * Установить обработчик по клику на кнопке закрытия
+   * @param callback
+   */
   setCloseButtonClickHandler = (callback) => {
     this._callback.closeButtonClick = callback;
     this.#closeButton.addEventListener('click', this.#closeButtonClickHandler);
   };
 
+  /**
+   * Установить обработчик на кнопку "Добавить к просмотру"
+   * @param callback
+   */
   setAddToWatchlistButtonClickHandler = (callback) => {
     this._callback.addToWatchlistButtonClick = callback;
     this.#watchListButton.addEventListener('click', this.#addToWatchlistButtonClickHandler);
   };
 
+  /**
+   * Установить обработчик на кнопку "Просмотрен"
+   * @param callback
+   */
   setMarkAsWatchedButtonClickHandler = (callback) => {
     this._callback.markAsWatchedButtonClick = callback;
     this.#watchedButton.addEventListener('click', this.#markAsWatchedButtonClickHandler);
   };
 
+  /**
+   * Установить обработчик на кнопку "Добавить в избранное"
+   * @param callback
+   */
   setMarkAsFavoriteButtonClickHandler = (callback) => {
     this._callback.markAsFavoriteButtonClick = callback;
     this.#favoriteButton.addEventListener('click', this.#markAsFavoriteButtonClickHandler);
   };
 
+  _restoreHandlers = () => {
+    this.#setInnerHandlers();
+    this.#setFilmDetailsPosition(this._state.position);
+  };
+
+  /**
+   * Установить позицию скролла после перерисовки
+   * @param position
+   */
+  #setFilmDetailsPosition = (position) => {
+    this.element.scrollTo(position.x, position.y);
+  };
+
+  /**
+   * Вызов обработчика клика по кнопке
+   * @param evt
+   */
   #closeButtonClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.closeButtonClick();
   };
 
+  /**
+   * Вызов обработчика клика на кнопке "Добавить к просмотру"
+   * @param evt
+   */
   #addToWatchlistButtonClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.addToWatchlistButtonClick();
   };
 
+  /**
+   * Вызов обработчика клика на кнопке "Просмотрен"
+   * @param evt
+   */
   #markAsWatchedButtonClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.markAsWatchedButtonClick();
   };
 
+  /**
+   * Вызов обработчика клика на кнопке "Добавить в избранное"
+   * @param evt
+   */
   #markAsFavoriteButtonClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.markAsFavoriteButtonClick();
+  };
+
+  /**
+   * Получение элементов формы комментариев
+   */
+  #setFormCommentElements = () => {
+    this.#newCommentElement = this.element.querySelector('.film-details__new-comment');
+    this.#addEmojiElement = this.#newCommentElement.querySelector('.film-details__add-emoji-label');
+    this.#commentInputElement = this.#newCommentElement.querySelector('.film-details__comment-input');
+    this.#emojiItems = this.#newCommentElement.querySelectorAll('.film-details__emoji-item');
+  };
+
+  /**
+   * Установка внутренних обработчиков
+   */
+  #setInnerHandlers = () => {
+    this.#setEmojiItemsHandler();
+  };
+
+  /**
+   * Обработчик по клику на эмоцию в форме
+   * @param evt
+   */
+  #emojiItemChangeHandler = (evt) => {
+    evt.preventDefault();
+    this.updateElement({
+      emotion: evt.target.value,
+      position: {x: 0, y: this.element.scrollTop},
+    });
+  };
+
+  /**
+   * Установщик обработчика на изменение
+   * эмоций
+   */
+  #setEmojiItemsHandler = () => {
+    this.#setFormCommentElements();
+    this.#emojiItems.forEach((item) => {
+      item.addEventListener('change', this.#emojiItemChangeHandler);
+    });
   };
 }

@@ -28,6 +28,17 @@ const SORT_TYPES = [
 ];
 
 /**
+ * Список эмоций
+ * @type {string[]}
+ */
+const EMOTIONS_LIST = [
+  'smile',
+  'sleeping',
+  'puke',
+  'angry',
+];
+
+/**
  * Максимальное количество фильмов,
  * отдаваемых моделью
  * @type {number}
@@ -110,4 +121,5 @@ export {
   ID_VALID_SYMBOLS,
   ID_SIZE,
   FILM_COUNT_PER_STEP,
+  EMOTIONS_LIST,
 };
