@@ -1,6 +1,8 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import {EMOTIONS_LIST} from '../const';
 import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+dayjs.extend(duration);
 
 /**
  * Шаблон блока с постером фильма
@@ -106,10 +108,12 @@ const createFilmDetailsReleaseDateTemplate = (release) => (
  * @returns {string}
  */
 const createFilmDetailsRuntimeTemplate = (runtime) => (
-  `${runtime.length
+  `${runtime
     ? `<tr class="film-details__row">
           <td class="film-details__term">Runtime</td>
-          <td class="film-details__cell">${runtime}</td>
+          <td class="film-details__cell">
+            ${dayjs.duration(runtime, 'm').format('H[h] mm[m]')}
+          </td>
        </tr>`
     : ''}`
 );
@@ -194,7 +198,7 @@ const createFilmDetailsCommentsListTemplate = (comments) => (
                   <p class="film-details__comment-text">${comment}</p>
                   <p class="film-details__comment-info">
                     <span class="film-details__comment-author">${author}</span>
-                    <span class="film-details__comment-day">${date}</span>
+                    <span class="film-details__comment-day">${dayjs(date).format('YYYY/MM/DD HH:mm')}</span>
                     <button class="film-details__comment-delete">Delete</button>
                   </p>
                 </div>
