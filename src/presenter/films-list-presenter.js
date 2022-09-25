@@ -67,12 +67,6 @@ export default class FilmsListPresenter {
   #filmsListShowMoreButtonComponent = null;
 
   /**
-   * Презентер открытого всплывающего окна
-   * @type {null}
-   */
-  #detailPresenter = null;
-
-  /**
    * Презентер компонента сортировки
    * @type {null}
    */
@@ -213,14 +207,11 @@ export default class FilmsListPresenter {
   #handleFilmCardClick = (film, comments) => {
     this.#clearDetailPresenter();
 
-    const filmDetailPresenter = new FilmDetailPresenter(this.#container, this.#handleFilmChange);
-    filmDetailPresenter.init(film, comments);
+    this.#filmDetailPresenter = new FilmDetailPresenter(this.#container, this.#handleFilmChange, this.#handleFilmDetailDelete);
+    this.#filmDetailPresenter.init(film, comments);
 
     this.#container.addEventListener('keydown', this.#onEscapeKeydown);
     this.#container.classList.add('hide-overflow');
-    this.#detailPresenter = filmDetailPresenter;
-
-    this.#filmDetailPresenter = filmDetailPresenter;
   };
 
   /**
@@ -229,10 +220,14 @@ export default class FilmsListPresenter {
    */
   #handleFilmChange = (updatedFilm) => {
     this.#filmCardPresenter.get(updatedFilm.id).rerender(updatedFilm);
+  };
 
-    if (this.#filmDetailPresenter !== null) {
-      this.#filmDetailPresenter.rerender(updatedFilm);
-    }
+  /**
+   * Обработчик удаления объекта
+   * всплывающего окна
+   */
+  #handleFilmDetailDelete = () => {
+    this.#clearDetailPresenter();
   };
 
   /**
@@ -265,8 +260,8 @@ export default class FilmsListPresenter {
    * Удаляет открытое всплывающее окно
    */
   #clearDetailPresenter = () => {
-    if (this.#detailPresenter !== null) {
-      this.#detailPresenter.destroy();
+    if (this.#filmDetailPresenter !== null) {
+      this.#filmDetailPresenter.destroy();
       this.#filmDetailPresenter = null;
 
       this.#container.removeEventListener('keydown', this.#onEscapeKeydown);

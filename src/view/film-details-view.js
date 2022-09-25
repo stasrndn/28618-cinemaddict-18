@@ -272,7 +272,7 @@ const getContentFilmComments = (comments, filmCommentsIds) => {
   return selectedComments;
 };
 
-const createFilmDetailsTemplate = (film, comments, state) => {
+const createFilmDetailsTemplate = (state, comments) => {
 
   const {
     poster,
@@ -287,14 +287,14 @@ const createFilmDetailsTemplate = (film, comments, state) => {
     genre,
     description,
     ageRating,
-  } = film.filmInfo;
+  } = state.filmInfo;
 
-  const {watchlist, alreadyWatched, favorite} = film.userDetails;
-
-  const contentFilmComments = getContentFilmComments(comments, film.comments);
-
+  const isWatchlist = state.userDetails.watchlist;
+  const isAlreadyWatched = state.userDetails.alreadyWatched;
+  const isFavorite = state.userDetails.favorite;
   const emotion = state.emotion ?? null;
 
+  const contentFilmComments = getContentFilmComments(comments, state.comments);
   const posterTemplate = createFilmDetailsPosterTemplate(poster);
   const totalRatingTemplate = createFilmDetailsTotalRatingTemplate(totalRating);
   const titleTemplate = createFilmDetailsTitleTemplate(title);
@@ -308,7 +308,7 @@ const createFilmDetailsTemplate = (film, comments, state) => {
   const genresTemplate = createFilmDetailsGenresTemplate(genre);
   const descriptionTemplate = createFilmDetailsDescriptionTemplate(description);
   const ageRatingTemplate = createFilmDetailsAgeRatingTemplate(ageRating);
-  const commentsTitleTemplate = createFilmDetailsCommentsTitleTemplate(film.comments);
+  const commentsTitleTemplate = createFilmDetailsCommentsTitleTemplate(state.comments);
   const commentsListTemplate = createFilmDetailsCommentsListTemplate(contentFilmComments);
   const emojiListTemplate = createFilmDetailsEmojiListTemplate(emotion);
 
@@ -348,14 +348,14 @@ const createFilmDetailsTemplate = (film, comments, state) => {
         </div>
 
         <section class="film-details__controls">
-          <button type="button" class="film-details__control-button ${watchlist ? 'film-details__control-button--active' : ''} film-details__control-button--watchlist" id="watchlist" name="watchlist">
-            ${watchlist ? 'Added' : 'Add'} to watchlist
+          <button type="button" class="film-details__control-button ${isWatchlist ? 'film-details__control-button--active' : ''} film-details__control-button--watchlist" id="watchlist" name="watchlist">
+            ${isWatchlist ? 'Added' : 'Add'} to watchlist
           </button>
-          <button type="button" class="film-details__control-button ${alreadyWatched ? 'film-details__control-button--active' : ''} film-details__control-button--watched" id="watched" name="watched">
-            ${alreadyWatched ? 'Already watched' : 'Not Viewed'}
+          <button type="button" class="film-details__control-button ${isAlreadyWatched ? 'film-details__control-button--active' : ''} film-details__control-button--watched" id="watched" name="watched">
+            ${isAlreadyWatched ? 'Already watched' : 'Not Viewed'}
           </button>
-          <button type="button" class="film-details__control-button ${favorite ? 'film-details__control-button--active' : ''} film-details__control-button--favorite" id="favorite" name="favorite">
-            ${favorite ? 'Added' : 'Add'} to favorites
+          <button type="button" class="film-details__control-button ${isFavorite ? 'film-details__control-button--active' : ''} film-details__control-button--favorite" id="favorite" name="favorite">
+            ${isFavorite ? 'Added' : 'Add'} to favorites
           </button>
         </section>
       </div>
@@ -384,183 +384,126 @@ const createFilmDetailsTemplate = (film, comments, state) => {
 
 export default class FilmDetailsView extends AbstractStatefulView {
   /**
-   * Данные фильма
-   * @type {null}
-   */
-  #film = null;
-
-  /**
    * Общий список комментариев
    * @type {null}
    */
   #comments = null;
 
-  /**
-   * Кнопка закрытия всплывающего окна
-   * @type {null}
-   */
-  #closeButton = null;
-
-  /**
-   * Кнопка "Добавить к просмотру"
-   * @type {null}
-   */
-  #watchListButton = null;
-
-  /**
-   * Кнопка "Отметить просмотренным"
-   * @type {null}
-   */
-  #watchedButton = null;
-
-  /**
-   * Кнопка "Добавить в избранное"
-   * @type {null}
-   */
-  #favoriteButton = null;
-
-  /**
-   * Форма добавления нового комментария
-   * @type {null}
-   */
-  #newCommentElement = null;
-
-  /**
-   * Область добавления эмоции в форме комментария
-   * @type {null}
-   */
-  #addEmojiElement = null;
-
-  /**
-   * Поле ввода текста комментария
-   * @type {null}
-   */
-  #commentInputElement = null;
-
-  /**
-   * Радиокнопки эмоций
-   * @type {null}
-   */
-  #emojiItems = null;
-
   constructor(film, comments) {
     super();
-    this.#film = film;
+    this._state = FilmDetailsView.parseFilmToState(film);
     this.#comments = comments;
 
-    this.#closeButton = this.element.querySelector('.film-details__close-btn');
-    this.#watchListButton = this.element.querySelector('#watchlist');
-    this.#watchedButton = this.element.querySelector('#watched');
-    this.#favoriteButton = this.element.querySelector('#favorite');
-
-    this.#setFormCommentElements();
     this.#setInnerHandlers();
   }
 
   get template() {
-    return createFilmDetailsTemplate(this.#film, this.#comments, this._state);
+    return createFilmDetailsTemplate(this._state, this.#comments);
   }
 
   /**
-   * Установить обработчик по клику на кнопке закрытия
+   * Сохранить обработчик на изменение фильма
    * @param callback
    */
-  setCloseButtonClickHandler = (callback) => {
-    this._callback.closeButtonClick = callback;
-    this.#closeButton.addEventListener('click', this.#closeButtonClickHandler);
+  setFilmChangeHandler = (callback) => {
+    this._callback.filmChangeHandler = callback;
   };
 
   /**
-   * Установить обработчик на кнопку "Добавить к просмотру"
+   * Сохранить обработчик на закрытие окна
    * @param callback
    */
-  setAddToWatchlistButtonClickHandler = (callback) => {
-    this._callback.addToWatchlistButtonClick = callback;
-    this.#watchListButton.addEventListener('click', this.#addToWatchlistButtonClickHandler);
-  };
-
-  /**
-   * Установить обработчик на кнопку "Просмотрен"
-   * @param callback
-   */
-  setMarkAsWatchedButtonClickHandler = (callback) => {
-    this._callback.markAsWatchedButtonClick = callback;
-    this.#watchedButton.addEventListener('click', this.#markAsWatchedButtonClickHandler);
-  };
-
-  /**
-   * Установить обработчик на кнопку "Добавить в избранное"
-   * @param callback
-   */
-  setMarkAsFavoriteButtonClickHandler = (callback) => {
-    this._callback.markAsFavoriteButtonClick = callback;
-    this.#favoriteButton.addEventListener('click', this.#markAsFavoriteButtonClickHandler);
+  setFilmDetailDeleteHandler = (callback) => {
+    this._callback.filmDetailDeleteHandler = callback;
   };
 
   _restoreHandlers = () => {
     this.#setInnerHandlers();
-    this.#setFilmDetailsPosition(this._state.position);
-  };
-
-  /**
-   * Установить позицию скролла после перерисовки
-   * @param position
-   */
-  #setFilmDetailsPosition = (position) => {
-    this.element.scrollTo(position.x, position.y);
-  };
-
-  /**
-   * Вызов обработчика клика по кнопке
-   * @param evt
-   */
-  #closeButtonClickHandler = (evt) => {
-    evt.preventDefault();
-    this._callback.closeButtonClick();
-  };
-
-  /**
-   * Вызов обработчика клика на кнопке "Добавить к просмотру"
-   * @param evt
-   */
-  #addToWatchlistButtonClickHandler = (evt) => {
-    evt.preventDefault();
-    this._callback.addToWatchlistButtonClick();
-  };
-
-  /**
-   * Вызов обработчика клика на кнопке "Просмотрен"
-   * @param evt
-   */
-  #markAsWatchedButtonClickHandler = (evt) => {
-    evt.preventDefault();
-    this._callback.markAsWatchedButtonClick();
-  };
-
-  /**
-   * Вызов обработчика клика на кнопке "Добавить в избранное"
-   * @param evt
-   */
-  #markAsFavoriteButtonClickHandler = (evt) => {
-    evt.preventDefault();
-    this._callback.markAsFavoriteButtonClick();
-  };
-
-  /**
-   * Получение элементов формы комментариев
-   */
-  #setFormCommentElements = () => {
-    this.#newCommentElement = this.element.querySelector('.film-details__new-comment');
-    this.#addEmojiElement = this.#newCommentElement.querySelector('.film-details__add-emoji-label');
-    this.#commentInputElement = this.#newCommentElement.querySelector('.film-details__comment-input');
-    this.#emojiItems = this.#newCommentElement.querySelectorAll('.film-details__emoji-item');
+    this.#setElementPosition();
   };
 
   /**
    * Установка внутренних обработчиков
    */
   #setInnerHandlers = () => {
+    this.#setCloseButtonClickHandler();
+    this.#setAddToWatchlistButtonClickHandler();
+    this.#setMarkAsWatchedButtonClickHandler();
+    this.#setMarkAsFavoriteButtonClickHandler();
     this.#setEmojiItemsHandler();
+  };
+
+  /**
+   * Установить обработчик по клику на кнопке закрытия
+   */
+  #setCloseButtonClickHandler = () => {
+    const closeButton = this.element.querySelector('.film-details__close-btn');
+    closeButton.addEventListener('click', this.#closeButtonClickHandler);
+  };
+
+  #closeButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.filmDetailDeleteHandler();
+  };
+
+  /**
+   * Установит обработчик на кнопку "Добавить к просмотру"
+   */
+  #setAddToWatchlistButtonClickHandler = () => {
+    const watchListButton = this.element.querySelector('#watchlist');
+    watchListButton.addEventListener('click', this.#addToWatchlistButtonClickHandler);
+  };
+
+  /**
+   * Обработчик кнопки "Добавить к просмотру"
+   * @param evt
+   */
+  #addToWatchlistButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this._state.userDetails.watchlist = !this._state.userDetails.watchlist;
+    this._state.position = {x: 0, y: this.element.scrollTop};
+    this._callback.filmChangeHandler(FilmDetailsView.parseStateToFilm(this._state));
+    this.updateElement(this._state);
+  };
+
+  /**
+   * Установит обработчик на кнопку "Просмотрен"
+   */
+  #setMarkAsWatchedButtonClickHandler = () => {
+    const watchedButton = this.element.querySelector('#watched');
+    watchedButton.addEventListener('click', this.#markAsWatchedButtonClickHandler);
+  };
+
+  /**
+   * Обработчик кнопки "Просмотрен"
+   * @param evt
+   */
+  #markAsWatchedButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this._state.userDetails.alreadyWatched = !this._state.userDetails.alreadyWatched;
+    this._state.position = {x: 0, y: this.element.scrollTop};
+    this._callback.filmChangeHandler(FilmDetailsView.parseStateToFilm(this._state));
+    this.updateElement(this._state);
+  };
+
+  /**
+   * Установит обработчик на кнопку "Добавить в избранное"
+   */
+  #setMarkAsFavoriteButtonClickHandler = () => {
+    const favoriteButton = this.element.querySelector('#favorite');
+    favoriteButton.addEventListener('click', this.#markAsFavoriteButtonClickHandler);
+  };
+
+  /**
+   * Обработчик кнопки "Добавить в избранное"
+   * @param evt
+   */
+  #markAsFavoriteButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this._state.userDetails.favorite = !this._state.userDetails.favorite;
+    this._state.position = {x: 0, y: this.element.scrollTop};
+    this._callback.filmChangeHandler(FilmDetailsView.parseStateToFilm(this._state));
+    this.updateElement(this._state);
   };
 
   /**
@@ -569,20 +512,53 @@ export default class FilmDetailsView extends AbstractStatefulView {
    */
   #emojiItemChangeHandler = (evt) => {
     evt.preventDefault();
-    this.updateElement({
-      emotion: evt.target.value,
-      position: {x: 0, y: this.element.scrollTop},
+    this._state.emotion = evt.target.value;
+    this._state.position = {x: 0, y: this.element.scrollTop};
+    this.updateElement(this._state);
+  };
+
+  /**
+   * Установщик обработчика на
+   * изменение эмоций
+   */
+  #setEmojiItemsHandler = () => {
+    const newCommentElement = this.element.querySelector('.film-details__new-comment');
+    const emojiItems = newCommentElement.querySelectorAll('.film-details__emoji-item');
+
+    emojiItems.forEach((item) => {
+      item.addEventListener('change', this.#emojiItemChangeHandler);
     });
   };
 
   /**
-   * Установщик обработчика на изменение
-   * эмоций
+   * Установить позицию окна позицию окна
    */
-  #setEmojiItemsHandler = () => {
-    this.#setFormCommentElements();
-    this.#emojiItems.forEach((item) => {
-      item.addEventListener('change', this.#emojiItemChangeHandler);
-    });
+  #setElementPosition = () => {
+    this.element.scrollTo(this._state.position.x, this._state.position.y);
+  };
+
+  /**
+   * Преобразовать данные в state | состояние
+   * @param film
+   * @returns {*&{position: {x: number, y: number}}}
+   */
+  static parseFilmToState = (film) => ({
+    ...film,
+    position: {x: 0, y: 0},
+    emotion: null,
+  });
+
+  /**
+   * Преобразовать стейт обратно в данные
+   * @param state
+   * @returns {*}
+   */
+  static parseStateToFilm = (state) => {
+    const film = {...state};
+
+    delete film.position;
+    delete film.emotion;
+
+    return film;
   };
 }
