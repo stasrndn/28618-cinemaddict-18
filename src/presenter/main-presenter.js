@@ -50,18 +50,19 @@ export default class MainPresenter {
    * Инициализация main презентера
    */
   init = () => {
-    if (![...this.#filmsModel.films].length) {
+    if (!this.#filmsModel.films.length) {
       this.#showEmptyMessage();
-    } else {
-      const filmsPresenter = new FilmsPresenter(this.#mainContainer);
-      filmsPresenter.init();
-
-      this.#containers.filmsContainer = filmsPresenter.filmsComponent;
-
-      this.#renderAllFilms();
-      this.#renderTopRatedFilms();
-      this.#renderMostCommentedFilms();
+      return;
     }
+
+    const filmsPresenter = new FilmsPresenter(this.#mainContainer);
+    filmsPresenter.init();
+
+    this.#containers.filmsContainer = filmsPresenter.filmsComponent;
+
+    this.#renderAllFilms();
+    this.#renderTopRatedFilms();
+    this.#renderMostCommentedFilms();
   };
 
   /**

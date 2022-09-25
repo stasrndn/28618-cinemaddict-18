@@ -1,5 +1,5 @@
 import FilmDetailsView from '../view/film-details-view';
-import {render, replace} from '../framework/render';
+import {render} from '../framework/render';
 
 export default class FilmDetailPresenter {
   /**
@@ -27,14 +27,22 @@ export default class FilmDetailPresenter {
   #filmDetailsComponent = null;
 
   /**
-   * Обработчик изменения фильма
+   * Колбек изменения фильма
    * @type {null}
    */
   #filmChangeHandler = null;
 
-  constructor(container, filmChangeHandler) {
+  /**
+   * Колбек удаления презентера
+   * всплывающего окна
+   * @type {null}
+   */
+  #filmDetailDeleteHandler = null;
+
+  constructor(container, filmChangeHandler, filmDetailDeleteHandler) {
     this.#container = container;
     this.#filmChangeHandler = filmChangeHandler;
+    this.#filmDetailDeleteHandler = filmDetailDeleteHandler;
   }
 
   /**
@@ -47,23 +55,6 @@ export default class FilmDetailPresenter {
     this.#comments = comments;
 
     this.#renderFilmDetailsComponent();
-  };
-
-  /**
-   * Перерисовывает содержимое всплывающего окна
-   * @param updatedFilm
-   */
-  rerender = (updatedFilm) => {
-    const updatedFilmCardComponent = new FilmDetailsView(updatedFilm, this.#comments);
-
-    updatedFilmCardComponent.setCloseButtonClickHandler(this.#onClickCloseButton);
-    updatedFilmCardComponent.setAddToWatchlistButtonClickHandler(this.#onClickAddToWatchlistButton);
-    updatedFilmCardComponent.setMarkAsWatchedButtonClickHandler(this.#onClickMarkAsWatchedButton);
-    updatedFilmCardComponent.setMarkAsFavoriteButtonClickHandler(this.#onClickMarkAsFavoriteButton);
-
-    replace(updatedFilmCardComponent, this.#filmDetailsComponent);
-
-    this.#filmDetailsComponent = updatedFilmCardComponent;
   };
 
   /**
@@ -81,34 +72,9 @@ export default class FilmDetailPresenter {
    */
   #renderFilmDetailsComponent = () => {
     this.#filmDetailsComponent = new FilmDetailsView(this.#film, this.#comments);
-
-    this.#filmDetailsComponent.setCloseButtonClickHandler(this.#onClickCloseButton);
-    this.#filmDetailsComponent.setAddToWatchlistButtonClickHandler(this.#onClickAddToWatchlistButton);
-    this.#filmDetailsComponent.setMarkAsWatchedButtonClickHandler(this.#onClickMarkAsWatchedButton);
-    this.#filmDetailsComponent.setMarkAsFavoriteButtonClickHandler(this.#onClickMarkAsFavoriteButton);
+    this.#filmDetailsComponent.setFilmChangeHandler(this.#filmChangeHandler);
+    this.#filmDetailsComponent.setFilmDetailDeleteHandler(this.#filmDetailDeleteHandler);
 
     render(this.#filmDetailsComponent, this.#container);
-  };
-
-  /**
-   * Обработчик клика по кнопке "Закрыть окно" (крестик)
-   */
-  #onClickCloseButton = () => {
-    this.destroy();
-  };
-
-  #onClickAddToWatchlistButton = () => {
-    this.#film.userDetails.watchlist = !this.#film.userDetails.watchlist;
-    this.#filmChangeHandler(this.#film);
-  };
-
-  #onClickMarkAsWatchedButton = () => {
-    this.#film.userDetails.alreadyWatched = !this.#film.userDetails.alreadyWatched;
-    this.#filmChangeHandler(this.#film);
-  };
-
-  #onClickMarkAsFavoriteButton = () => {
-    this.#film.userDetails.favorite = !this.#film.userDetails.favorite;
-    this.#filmChangeHandler(this.#film);
   };
 }
