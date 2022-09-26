@@ -1,5 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
-import {EMOTIONS_LIST} from '../const';
+import {EMOTIONS_LIST, UserAction, UpdateType} from '../const';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 dayjs.extend(duration);
@@ -466,7 +466,7 @@ export default class FilmDetailsView extends AbstractStatefulView {
     evt.preventDefault();
     this._state.userDetails.watchlist = !this._state.userDetails.watchlist;
     this._state.position = {x: 0, y: this.element.scrollTop};
-    this._callback.filmChangeHandler(FilmDetailsView.parseStateToFilm(this._state));
+    this._callback.filmChangeHandler(UserAction.UPDATE_FILM, UpdateType.PATCH, FilmDetailsView.parseStateToFilm(this._state));
     this.updateElement(this._state);
   };
 
@@ -486,7 +486,7 @@ export default class FilmDetailsView extends AbstractStatefulView {
     evt.preventDefault();
     this._state.userDetails.alreadyWatched = !this._state.userDetails.alreadyWatched;
     this._state.position = {x: 0, y: this.element.scrollTop};
-    this._callback.filmChangeHandler(FilmDetailsView.parseStateToFilm(this._state));
+    this._callback.filmChangeHandler(UserAction.UPDATE_FILM, UpdateType.PATCH, FilmDetailsView.parseStateToFilm(this._state));
     this.updateElement(this._state);
   };
 
@@ -506,7 +506,7 @@ export default class FilmDetailsView extends AbstractStatefulView {
     evt.preventDefault();
     this._state.userDetails.favorite = !this._state.userDetails.favorite;
     this._state.position = {x: 0, y: this.element.scrollTop};
-    this._callback.filmChangeHandler(FilmDetailsView.parseStateToFilm(this._state));
+    this._callback.filmChangeHandler(UserAction.UPDATE_FILM, UpdateType.PATCH, FilmDetailsView.parseStateToFilm(this._state));
     this.updateElement(this._state);
   };
 

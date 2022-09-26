@@ -6,7 +6,7 @@ import FilmDetailPresenter from './film-detail-presenter';
 import FilmsListShowMoreButtonView from '../view/films-list-show-more-button-view';
 import MainNavigationPresenter from './main-navigation-presenter';
 import SortPresenter from './sort-presenter';
-import {FILM_COUNT_PER_STEP, SortType} from '../const';
+import {FILM_COUNT_PER_STEP, SortType, UpdateType, UserAction} from '../const';
 import {remove, render} from '../framework/render';
 import {isEscapeKey} from '../utils';
 import {sortByDateRelease, sortByRating} from '../utils/film';
@@ -29,6 +29,12 @@ export default class FilmsListPresenter {
    * @type {null}
    */
   #filmsContainer = null;
+
+  /**
+   * Модель фильмов
+   * @type {null}
+   */
+  #filmsModel = null;
 
   /**
    * Массив для хранения списка фильмов
@@ -121,6 +127,8 @@ export default class FilmsListPresenter {
    * @param commentsModel
    */
   init = (filmsModel, commentsModel) => {
+    this.#filmsModel = filmsModel;
+
     this.#filmsData = [...filmsModel.films];
     this.#sourcesFilmsData = [...filmsModel.films];
     this.#commentsData = [...commentsModel.comments];
@@ -132,6 +140,8 @@ export default class FilmsListPresenter {
     this.#renderFilmsListContainerComponent();
 
     this.#renderFilmList();
+
+    this.#filmsModel.addObserver(this.#handleModelEvent);
   };
 
   /**
@@ -216,10 +226,29 @@ export default class FilmsListPresenter {
 
   /**
    * Обработчик изменения фильма
-   * @param updatedFilm
+   * @param actionType
+   * @param updateType
+   * @param update
    */
-  #handleFilmChange = (updatedFilm) => {
-    this.#filmCardPresenter.get(updatedFilm.id).rerender(updatedFilm);
+  #handleFilmChange = (actionType, updateType, update) => {
+    switch (actionType) {
+      case UserAction.UPDATE_FILM:
+        this.#filmsModel.updateFilm(updateType, update);
+        break;
+    }
+  };
+
+  /**
+   * Обработчик изменения модели
+   * @param updateType
+   * @param data
+   */
+  #handleModelEvent = (updateType, data) => {
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this.#filmCardPresenter.get(data.id).rerender(data);
+        break;
+    }
   };
 
   /**

@@ -39,6 +39,26 @@ const EMOTIONS_LIST = [
 ];
 
 /**
+ * Тип обновления элемента интерфейса
+ * @type {{MAJOR: string, MINOR: string, PATCH: string}}
+ */
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
+/**
+ * Действия пользователя
+ * @type {{UPDATE_FILM: string, DELETE_FILM: string, ADD_FILM: string}}
+ */
+const UserAction = {
+  UPDATE_FILM: 'UPDATE_FILM',
+  ADD_FILM: 'ADD_FILM',
+  DELETE_FILM: 'DELETE_FILM',
+};
+
+/**
  * Максимальное количество фильмов,
  * отдаваемых моделью
  * @type {number}
@@ -122,4 +142,6 @@ export {
   ID_SIZE,
   FILM_COUNT_PER_STEP,
   EMOTIONS_LIST,
+  UpdateType,
+  UserAction,
 };
