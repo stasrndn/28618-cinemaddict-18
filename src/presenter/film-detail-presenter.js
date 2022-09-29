@@ -1,24 +1,12 @@
-import FilmDetailsView from '../view/film-details-view';
-import {render} from '../framework/render';
+import FilmDetailsView from '../view/film-details-view.js';
+import {remove, render, replace} from '../framework/render.js';
 
 export default class FilmDetailPresenter {
   /**
-   * Контейнер документа (body)
+   * Контейнер всплывающего окна
    * @type {null}
    */
-  #container = null;
-
-  /**
-   * Объект с данными фильма
-   * @type {null}
-   */
-  #film = null;
-
-  /**
-   * Массив с комментариями
-   * @type {null}
-   */
-  #comments = null;
+  #popupContainer = null;
 
   /**
    * Компонент всплывающего окна с фильмом
@@ -39,8 +27,20 @@ export default class FilmDetailPresenter {
    */
   #filmDetailDeleteHandler = null;
 
-  constructor(container, filmChangeHandler, filmDetailDeleteHandler) {
-    this.#container = container;
+  /**
+   * Модели данных
+   * @type {null}
+   */
+  #models = null;
+
+  /**
+   * Информация о текущем фильме
+   * @type {null}
+   */
+  #film = null;
+
+  constructor(popupContainer, filmChangeHandler, filmDetailDeleteHandler) {
+    this.#popupContainer = popupContainer;
     this.#filmChangeHandler = filmChangeHandler;
     this.#filmDetailDeleteHandler = filmDetailDeleteHandler;
   }
@@ -48,11 +48,11 @@ export default class FilmDetailPresenter {
   /**
    * Инициализация film detail презентера
    * @param film
-   * @param comments
+   * @param models
    */
-  init = (film, comments) => {
+  init = (film, models) => {
     this.#film = film;
-    this.#comments = comments;
+    this.#models = models;
 
     this.#renderFilmDetailsComponent();
   };
@@ -62,19 +62,32 @@ export default class FilmDetailPresenter {
    */
   destroy = () => {
     if (this.#filmDetailsComponent !== null) {
-      this.#container.querySelector('.film-details').remove();
       this.#filmDetailsComponent = null;
     }
   };
 
   /**
-   * Отрисовка компонента всплывающего окна с фильмом
+   * Отрисовать всплывающее окно с фильмом
    */
   #renderFilmDetailsComponent = () => {
-    this.#filmDetailsComponent = new FilmDetailsView(this.#film, this.#comments);
+    this.#models.filmsModel.addObserver(this.#handleModelEvent);
+
+    const prevFilmDetailsComponent = this.#filmDetailsComponent;
+
+    this.#filmDetailsComponent = new FilmDetailsView(this.#film);
     this.#filmDetailsComponent.setFilmChangeHandler(this.#filmChangeHandler);
     this.#filmDetailsComponent.setFilmDetailDeleteHandler(this.#filmDetailDeleteHandler);
 
-    render(this.#filmDetailsComponent, this.#container);
+    if (prevFilmDetailsComponent === null) {
+      render(this.#filmDetailsComponent, this.#popupContainer);
+      return;
+    }
+
+    replace(this.#filmDetailsComponent, prevFilmDetailsComponent);
+    remove(prevFilmDetailsComponent);
+  };
+
+  #handleModelEvent = () => {
+    this.#filmDetailsComponent?.updateData();
   };
 }

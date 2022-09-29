@@ -1,5 +1,5 @@
-import FilmsListEmptyView from '../view/films-list-empty-view';
-import {render} from '../framework/render';
+import FilmsListEmptyView from '../view/films-list-empty-view.js';
+import {render} from '../framework/render.js';
 
 export default class FilmsEmptyPresenter {
   /**
@@ -8,15 +8,24 @@ export default class FilmsEmptyPresenter {
    */
   #container = null;
 
-  constructor(container) {
+  /**
+   * Модели
+   * @type {null}
+   */
+  #models = null;
+
+  constructor(container, models) {
     this.#container = container;
+    this.#models = models;
   }
 
   init = () => {
-    this.#renderFilmsListEmptyComponent();
-  };
+    const filmsCount = this.#models.filmsModel.films.length;
 
-  #renderFilmsListEmptyComponent = () => {
+    if (filmsCount) {
+      return;
+    }
+
     const filmsListEmptyComponent = new FilmsListEmptyView();
     render(filmsListEmptyComponent, this.#container);
   };

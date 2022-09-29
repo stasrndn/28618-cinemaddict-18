@@ -1,23 +1,30 @@
 import AbstractView from '../framework/view/abstract-view.js';
 
-const createFilmsListTitleTemplate = (config) => (
-  `<h2 class="films-list__title ${!config.title.length ? 'visually-hidden' : ''}">${config.title}</h2>`
+const createFilmsListTitleTemplate = (hidden, titleText) => (
+  `<h2 class="films-list__title ${hidden ? 'visually-hidden' : ''}">${titleText}</h2>`
 );
 
 export default class FilmsListTitleView extends AbstractView {
   /**
-   * Конфигурация представления
+   * Настройка показа заголовка
    * @type {null}
    */
-  #config = null;
+  #hidden = null;
 
-  constructor(config) {
+  /**
+   * Текст заголовка
+   * @type {null}
+   */
+  #titleText = null;
+
+  constructor(hidden = false, titleText = '') {
     super();
-    this.#config = config;
+    this.#hidden = hidden;
+    this.#titleText = titleText;
   }
 
   get template() {
-    return createFilmsListTitleTemplate(this.#config);
+    return createFilmsListTitleTemplate(this.#hidden, this.#titleText);
   }
 
 }

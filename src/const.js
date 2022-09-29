@@ -1,4 +1,15 @@
 /**
+ * Тип фильтра для списка фильмов
+ * @type {{ALL: string, WATCHLIST: string, FAVORITES: string, HISTORY: string}}
+ */
+const FilterType = {
+  ALL: 'all',
+  WATCHLIST: 'watchlist',
+  HISTORY: 'history',
+  FAVORITES: 'favorites',
+};
+
+/**
  * Тип сортировки списка
  * @type {{DATE: string, RATING: string, DEFAULT: string}}
  */
@@ -101,7 +112,13 @@ const ESCAPE_KEY = 'Escape';
  * Наименование тега ссылки
  * @type {string}
  */
-const TAG_NAME_LINK = 'A';
+const TAG_HREF = 'A';
+
+/**
+ * Наименование тега span
+ * @type {string}
+ */
+const TAG_SPAN = 'SPAN';
 
 /**
  * Наименование клавиши Esc
@@ -128,6 +145,7 @@ const ID_SIZE = 10;
 const FILM_COUNT_PER_STEP = 5;
 
 export {
+  FilterType,
   SortType,
   SORT_TYPES,
   MAX_FILMS_COUNT,
@@ -136,7 +154,8 @@ export {
   MAX_LENGTH_DESCRIPTION_FILM,
   MAX_PAST_COMMENT_YEAR,
   ESCAPE_KEY,
-  TAG_NAME_LINK,
+  TAG_HREF,
+  TAG_SPAN,
   ESC_KEY,
   ID_VALID_SYMBOLS,
   ID_SIZE,

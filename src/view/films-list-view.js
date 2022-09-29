@@ -1,23 +1,12 @@
-import AbstractView from '../framework/view/abstract-view';
+import AbstractView from '../framework/view/abstract-view.js';
 
-const createFilmsListTemplate = (config) => (
-  `<section class="films-list ${config.isMain ? '' : 'films-list--extra'}"></section>`
+const createFilmsListTemplate = () => (
+  '<section class="films-list"></section>'
 );
 
 export default class FilmsListView extends AbstractView {
-  /**
-   * Конфигурация представления
-   * @type {null}
-   */
-  #config = null;
-
-  constructor(config) {
-    super();
-    this.#config = config;
-  }
-
   get template() {
-    return createFilmsListTemplate(this.#config);
+    return createFilmsListTemplate();
   }
 
 }

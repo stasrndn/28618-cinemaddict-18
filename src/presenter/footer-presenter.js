@@ -1,5 +1,5 @@
-import FooterStatisticsView from '../view/footer-statistics-view';
-import {render} from '../framework/render';
+import FooterStatisticsView from '../view/footer-statistics-view.js';
+import {render} from '../framework/render.js';
 
 export default class FooterPresenter {
   /**
@@ -8,15 +8,23 @@ export default class FooterPresenter {
    */
   #footerContainer = null;
 
-  constructor(container) {
+  /**
+   * Модели приложения
+   * @type {null}
+   */
+  #models = null;
+
+  constructor(container, models) {
     this.#footerContainer = container.querySelector('.footer');
+    this.#models = models;
   }
 
   /**
    * Инициализация презентера
    */
   init = () => {
-    const footerStatisticsComponent = new FooterStatisticsView();
+    const filmsCount = this.#models.filmsModel.films.length;
+    const footerStatisticsComponent = new FooterStatisticsView(filmsCount);
     render(footerStatisticsComponent, this.#footerContainer);
   };
 }

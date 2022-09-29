@@ -1,5 +1,5 @@
-import AbstractStatefulView from '../framework/view/abstract-stateful-view';
-import {EMOTIONS_LIST, UserAction, UpdateType} from '../const';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
+import {UserAction, UpdateType} from '../const.js';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 dayjs.extend(duration);
@@ -169,114 +169,7 @@ const createFilmDetailsAgeRatingTemplate = (ageRating) => (
     : ''}`
 );
 
-/**
- * Шаблон блока заголовка комментариев
- * @param comments
- * @returns {string}
- */
-const createFilmDetailsCommentsTitleTemplate = (comments) => (
-  `<h3 class="film-details__comments-title">Comments ${comments.length
-    ? `<span class="film-details__comments-count">${comments.length}</span>`
-    : ''}</h3>`
-);
-
-/**
- * Шаблон блока списка комментариев
- * @param comments
- * @returns {string}
- */
-const createFilmDetailsCommentsListTemplate = (comments) => (
-  `<ul class="film-details__comments-list">
-        ${comments.map((item) => {
-    const {author, comment, date, emotion} = item;
-    return (
-      `<li class="film-details__comment">
-                <span class="film-details__comment-emoji">
-                  <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
-                </span>
-                <div>
-                  <p class="film-details__comment-text">${comment}</p>
-                  <p class="film-details__comment-info">
-                    <span class="film-details__comment-author">${author}</span>
-                    <span class="film-details__comment-day">${dayjs(date).format('YYYY/MM/DD HH:mm')}</span>
-                    <button class="film-details__comment-delete">Delete</button>
-                  </p>
-                </div>
-              </li>`
-    );
-  }).join('')}
-     </ul>`
-);
-
-/**
- * Шаблон элемента в блоке эмоций в форме добавления комментария
- * @param item
- * @param emotion
- * @returns {string}
- */
-const createFilmDetailsEmojiListItemTemplate = (item, emotion) => (
-  `
-    <input
-      class="film-details__emoji-item visually-hidden"
-      name="comment-emoji"
-      type="radio"
-      id="emoji-${item}"
-      value="${item}"
-      ${item === emotion ? 'checked' : ''}
-    >
-    <label
-      class="film-details__emoji-label"
-      for="emoji-${item}"
-    >
-      <img
-        src="./images/emoji/${item}.png"
-        width="30" height="30"
-        alt="emoji"
-      >
-    </label>
-  `
-);
-
-/**
- * Шаблон блока эмоций в форме добавления комментария
- * @param emotion
- * @returns {string}
- */
-const createFilmDetailsEmojiListTemplate = (emotion) => {
-  const filmDetailsEmojiListTemplate = EMOTIONS_LIST
-    .map((item) => createFilmDetailsEmojiListItemTemplate(item, emotion))
-    .join('');
-
-  return `
-    <div class="film-details__emoji-list">
-      ${filmDetailsEmojiListTemplate}
-    </div>
-  `;
-};
-
-/**
- * Возвращает комментарии к выбранному фильму
- * @param comments
- * @param filmCommentsIds
- * @returns {*}
- */
-const getContentFilmComments = (comments, filmCommentsIds) => {
-  let selectedComments = comments.filter((comment) => filmCommentsIds.includes(comment.id));
-
-  selectedComments = selectedComments.map((item) => {
-    const {author, comment, date, emotion} = item;
-    return ({
-      author,
-      comment,
-      date: dayjs(date).format('YYYY/MM/DD HH:mm'),
-      emotion
-    });
-  });
-
-  return selectedComments;
-};
-
-const createFilmDetailsTemplate = (state, comments) => {
+const createFilmDetailsTemplate = (state) => {
 
   const {
     poster,
@@ -296,9 +189,7 @@ const createFilmDetailsTemplate = (state, comments) => {
   const isWatchlist = state.userDetails.watchlist;
   const isAlreadyWatched = state.userDetails.alreadyWatched;
   const isFavorite = state.userDetails.favorite;
-  const emotion = state.emotion ?? null;
 
-  const contentFilmComments = getContentFilmComments(comments, state.comments);
   const posterTemplate = createFilmDetailsPosterTemplate(poster);
   const totalRatingTemplate = createFilmDetailsTotalRatingTemplate(totalRating);
   const titleTemplate = createFilmDetailsTitleTemplate(title);
@@ -312,97 +203,65 @@ const createFilmDetailsTemplate = (state, comments) => {
   const genresTemplate = createFilmDetailsGenresTemplate(genre);
   const descriptionTemplate = createFilmDetailsDescriptionTemplate(description);
   const ageRatingTemplate = createFilmDetailsAgeRatingTemplate(ageRating);
-  const commentsTitleTemplate = createFilmDetailsCommentsTitleTemplate(state.comments);
-  const commentsListTemplate = createFilmDetailsCommentsListTemplate(contentFilmComments);
-  const emojiListTemplate = createFilmDetailsEmojiListTemplate(emotion);
 
   return (`
-    <section class="film-details">
-        <div class="film-details__inner">
-      <div class="film-details__top-container">
-        <div class="film-details__close">
-          <button class="film-details__close-btn" type="button">close</button>
-        </div>
-        <div class="film-details__info-wrap">
-          <div class="film-details__poster">
-            ${posterTemplate}
-            ${ageRatingTemplate}
-          </div>
-
-          <div class="film-details__info">
-            <div class="film-details__info-head">
-              <div class="film-details__title-wrap">
-                ${titleTemplate}
-                ${alternativeTitleTemplate}
-              </div>
-              ${totalRatingTemplate}
-            </div>
-
-            <table class="film-details__table">
-              ${directorTemplate}
-              ${writersTemplate}
-              ${actorsTemplate}
-              ${releaseDateTemplate}
-              ${runtimeTemplate}
-              ${countryTemplate}
-              ${genresTemplate}
-            </table>
-            ${descriptionTemplate}
-          </div>
+    <div class="film-details__top-container">
+      <div class="film-details__close">
+        <button class="film-details__close-btn" type="button">close</button>
+      </div>
+      <div class="film-details__info-wrap">
+        <div class="film-details__poster">
+          ${posterTemplate}
+          ${ageRatingTemplate}
         </div>
 
-        <section class="film-details__controls">
-          <button type="button" class="film-details__control-button ${isWatchlist ? 'film-details__control-button--active' : ''} film-details__control-button--watchlist" id="watchlist" name="watchlist">
-            ${isWatchlist ? 'Added' : 'Add'} to watchlist
-          </button>
-          <button type="button" class="film-details__control-button ${isAlreadyWatched ? 'film-details__control-button--active' : ''} film-details__control-button--watched" id="watched" name="watched">
-            ${isAlreadyWatched ? 'Already watched' : 'Not Viewed'}
-          </button>
-          <button type="button" class="film-details__control-button ${isFavorite ? 'film-details__control-button--active' : ''} film-details__control-button--favorite" id="favorite" name="favorite">
-            ${isFavorite ? 'Added' : 'Add'} to favorites
-          </button>
-        </section>
-      </div>
-
-      <div class="film-details__bottom-container">
-        <section class="film-details__comments-wrap">
-          ${commentsTitleTemplate}
-          ${commentsListTemplate}
-          <form class="film-details__new-comment" action="" method="get">
-            <div class="film-details__add-emoji-label">
-              ${emotion !== null ? `<img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">` : ''}
+        <div class="film-details__info">
+          <div class="film-details__info-head">
+            <div class="film-details__title-wrap">
+              ${titleTemplate}
+              ${alternativeTitleTemplate}
             </div>
+            ${totalRatingTemplate}
+          </div>
 
-            <label class="film-details__comment-label">
-              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
-            </label>
-
-            ${emojiListTemplate}
-          </form>
-        </section>
+          <table class="film-details__table">
+            ${directorTemplate}
+            ${writersTemplate}
+            ${actorsTemplate}
+            ${releaseDateTemplate}
+            ${runtimeTemplate}
+            ${countryTemplate}
+            ${genresTemplate}
+          </table>
+          ${descriptionTemplate}
+        </div>
       </div>
+
+      <section class="film-details__controls">
+        <button type="button" class="film-details__control-button ${isWatchlist ? 'film-details__control-button--active' : ''} film-details__control-button--watchlist" id="watchlist" name="watchlist">
+          ${isWatchlist ? 'Added' : 'Add'} to watchlist
+        </button>
+        <button type="button" class="film-details__control-button ${isAlreadyWatched ? 'film-details__control-button--active' : ''} film-details__control-button--watched" id="watched" name="watched">
+          ${isAlreadyWatched ? 'Already watched' : 'Not Viewed'}
+        </button>
+        <button type="button" class="film-details__control-button ${isFavorite ? 'film-details__control-button--active' : ''} film-details__control-button--favorite" id="favorite" name="favorite">
+          ${isFavorite ? 'Added' : 'Add'} to favorites
+        </button>
+      </section>
     </div>
-    </section>
   `);
 };
 
 export default class FilmDetailsView extends AbstractStatefulView {
-  /**
-   * Общий список комментариев
-   * @type {null}
-   */
-  #comments = null;
-
-  constructor(film, comments) {
+  constructor(film) {
     super();
     this._state = FilmDetailsView.parseFilmToState(film);
-    this.#comments = comments;
 
     this.#setInnerHandlers();
   }
 
   get template() {
-    return createFilmDetailsTemplate(this._state, this.#comments);
+    return createFilmDetailsTemplate(this._state);
   }
 
   /**
@@ -421,6 +280,11 @@ export default class FilmDetailsView extends AbstractStatefulView {
     this._callback.filmDetailDeleteHandler = callback;
   };
 
+  updateData = () => {
+    this.#freezeCurrentPosition();
+    this.updateElement(this._state);
+  };
+
   _restoreHandlers = () => {
     this.#setInnerHandlers();
     this.#setElementPosition();
@@ -434,7 +298,6 @@ export default class FilmDetailsView extends AbstractStatefulView {
     this.#setAddToWatchlistButtonClickHandler();
     this.#setMarkAsWatchedButtonClickHandler();
     this.#setMarkAsFavoriteButtonClickHandler();
-    this.#setEmojiItemsHandler();
   };
 
   /**
@@ -465,8 +328,8 @@ export default class FilmDetailsView extends AbstractStatefulView {
   #addToWatchlistButtonClickHandler = (evt) => {
     evt.preventDefault();
     this._state.userDetails.watchlist = !this._state.userDetails.watchlist;
-    this._state.position = {x: 0, y: this.element.scrollTop};
-    this._callback.filmChangeHandler(UserAction.UPDATE_FILM, UpdateType.PATCH, FilmDetailsView.parseStateToFilm(this._state));
+    this.#freezeCurrentPosition();
+    this.#callFilmChangeHandler();
     this.updateElement(this._state);
   };
 
@@ -485,8 +348,8 @@ export default class FilmDetailsView extends AbstractStatefulView {
   #markAsWatchedButtonClickHandler = (evt) => {
     evt.preventDefault();
     this._state.userDetails.alreadyWatched = !this._state.userDetails.alreadyWatched;
-    this._state.position = {x: 0, y: this.element.scrollTop};
-    this._callback.filmChangeHandler(UserAction.UPDATE_FILM, UpdateType.PATCH, FilmDetailsView.parseStateToFilm(this._state));
+    this.#freezeCurrentPosition();
+    this.#callFilmChangeHandler();
     this.updateElement(this._state);
   };
 
@@ -505,33 +368,9 @@ export default class FilmDetailsView extends AbstractStatefulView {
   #markAsFavoriteButtonClickHandler = (evt) => {
     evt.preventDefault();
     this._state.userDetails.favorite = !this._state.userDetails.favorite;
-    this._state.position = {x: 0, y: this.element.scrollTop};
-    this._callback.filmChangeHandler(UserAction.UPDATE_FILM, UpdateType.PATCH, FilmDetailsView.parseStateToFilm(this._state));
+    this.#freezeCurrentPosition();
+    this.#callFilmChangeHandler();
     this.updateElement(this._state);
-  };
-
-  /**
-   * Обработчик по клику на эмоцию в форме
-   * @param evt
-   */
-  #emojiItemChangeHandler = (evt) => {
-    evt.preventDefault();
-    this._state.emotion = evt.target.value;
-    this._state.position = {x: 0, y: this.element.scrollTop};
-    this.updateElement(this._state);
-  };
-
-  /**
-   * Установщик обработчика на
-   * изменение эмоций
-   */
-  #setEmojiItemsHandler = () => {
-    const newCommentElement = this.element.querySelector('.film-details__new-comment');
-    const emojiItems = newCommentElement.querySelectorAll('.film-details__emoji-item');
-
-    emojiItems.forEach((item) => {
-      item.addEventListener('change', this.#emojiItemChangeHandler);
-    });
   };
 
   /**
@@ -539,6 +378,20 @@ export default class FilmDetailsView extends AbstractStatefulView {
    */
   #setElementPosition = () => {
     this.element.scrollTo(this._state.position.x, this._state.position.y);
+  };
+
+  /**
+   * Запомнить текущую позицию всплывающего окна
+   */
+  #freezeCurrentPosition = () => {
+    this._state.position = {x: 0, y: this.element.scrollTop};
+  };
+
+  /**
+   * Вызвать обработчик изменения фильма
+   */
+  #callFilmChangeHandler = () => {
+    this._callback.filmChangeHandler(UserAction.UPDATE_FILM, UpdateType.PATCH, FilmDetailsView.parseStateToFilm(this._state));
   };
 
   /**

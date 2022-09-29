@@ -29,4 +29,11 @@ export default class CommentsModel extends Observable {
 
     this._notify(updateType, update);
   };
+
+  /**
+   * Метод для получения по их id
+   * @param entities - массив id комментариев
+   * @returns {*[]}
+   */
+  getCommentsById = (entities) => this.comments.filter((comment) => entities.includes(comment.id));
 }

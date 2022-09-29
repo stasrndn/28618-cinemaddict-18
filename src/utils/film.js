@@ -15,7 +15,31 @@ const sortByDateRelease = (filmA, filmB) => dayjs(filmA.filmInfo.release.date).i
  */
 const sortByRating = (filmA, filmB) => filmB.filmInfo.totalRating - filmA.filmInfo.totalRating;
 
+/**
+ * Находится ли фильм в списке "К просмотру"
+ * @param state
+ * @returns {*|boolean}
+ */
+const isWatchlist = (state) => state.userDetails.watchlist;
+
+/**
+ * Проверяет, просмотрен ли уже фильм
+ * @param state
+ * @returns {*|boolean}
+ */
+const isAlreadyWatched = (state) => state.userDetails.alreadyWatched;
+
+/**
+ * Проверяет, находится ли фильм в избранном
+ * @param state
+ * @returns {*|boolean}
+ */
+const isFavorite = (state) => state.userDetails.favorite;
+
 export {
   sortByDateRelease,
   sortByRating,
+  isWatchlist,
+  isAlreadyWatched,
+  isFavorite,
 };
