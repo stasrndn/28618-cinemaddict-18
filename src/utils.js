@@ -1,4 +1,4 @@
-import {ESC_KEY, ESCAPE_KEY, TAG_HREF, TAG_SPAN, ID_SIZE, ID_VALID_SYMBOLS} from './const.js';
+import {ESC_KEY, ESCAPE_KEY, TAG_HREF, TAG_SPAN, ID_SIZE, ID_VALID_SYMBOLS, ENTER_KEY} from './const.js';
 import {customAlphabet} from 'nanoid';
 
 /**
@@ -60,6 +60,13 @@ const isFilterItemClick = (evt) => ((evt.target.tagName === TAG_HREF) || (evt.ta
 const isControlButton = (evt) => evt.target.classList.contains('film-card__controls-item');
 
 /**
+ * Проверяет, что нажаты клавиши Ctrl + Enter
+ * @param evt
+ * @returns {boolean}
+ */
+const isCtrlEnterPressed = (evt) => evt.ctrlKey && evt.key === ENTER_KEY;
+
+/**
  * Генерирует случайный идентификатор
  * @param alphabet - допустимые символы идентификатора
  * @param size - длина идентификатора
@@ -86,6 +93,7 @@ export {
   getRandomInteger,
   getRandomFloat,
   isEscapeKey,
+  isCtrlEnterPressed,
   isLinkClicked,
   isFilterItemClick,
   isControlButton,

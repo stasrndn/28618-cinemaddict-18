@@ -1,6 +1,7 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {EMOTIONS_LIST, UpdateType, UserAction} from '../const.js';
 import dayjs from 'dayjs';
+import {isCtrlEnterPressed} from '../utils';
 
 /**
  * Шаблон элемента в блоке эмоций в форме добавления комментария
@@ -99,6 +100,23 @@ const createCommentsListTemplate = (comments) => {
 };
 
 /**
+ * Шаблон поля ввода комментария
+ * @param comment
+ * @returns {string}
+ */
+const createCommentInputTemplate = (comment) => (
+  `
+    <label class="film-details__comment-label">
+      <textarea
+        class="film-details__comment-input"
+        placeholder="Select reaction below and write comment here"
+        name="comment"
+      >${comment ?? ''}</textarea>
+    </label>
+  `
+);
+
+/**
  * Шаблон блока комментариев
  * @param state
  * @returns {string}
@@ -107,6 +125,7 @@ const createCommentsTemplate = (state) => {
   const commentsTitleTemplate = createCommentsTitleTemplate(state.comments);
   const commentsListTemplate = createCommentsListTemplate(state.comments);
   const emojiListTemplate = createEmojiListTemplate(state.emotion);
+  const commentInputTemplate = createCommentInputTemplate(state.comment);
 
   return (`
     <div class="film-details__bottom-container">
@@ -118,11 +137,7 @@ const createCommentsTemplate = (state) => {
           <div class="film-details__add-emoji-label">
             ${state.emotion ? `<img src="./images/emoji/${state.emotion}.png" width="55" height="55" alt="emoji-${state.emotion}">` : ''}
           </div>
-
-          <label class="film-details__comment-label">
-            <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
-          </label>
-
+          ${commentInputTemplate}
           ${emojiListTemplate}
         </form>
       </section>
@@ -159,6 +174,7 @@ export default class CommentsView extends AbstractStatefulView {
   #setInnerHandlers = () => {
     this.#handleEmojiItems();
     this.#handleCommentItems();
+    this.#handleCommentField();
   };
 
   /**
@@ -207,6 +223,32 @@ export default class CommentsView extends AbstractStatefulView {
   };
 
   /**
+   * Обработчик поля ввода комментария
+   * @param evt
+   */
+  #handleCommentInput = (evt) => {
+    evt.preventDefault();
+    this._state.comment = evt.target.value;
+  };
+
+  #handleCommentKeydown = (evt) => {
+    if (isCtrlEnterPressed(evt)) {
+      evt.preventDefault();
+      // отправка комментария
+    }
+  };
+
+  /**
+   * Добавление обработчиков
+   * на поле добавления комментария
+   */
+  #handleCommentField = () => {
+    const commentInput = this.element.querySelector('.film-details__comment-input');
+    commentInput.addEventListener('input', this.#handleCommentInput);
+    commentInput.addEventListener('keydown', this.#handleCommentKeydown);
+  };
+
+  /**
    * Найти удаляемый объект комментария
    * @param id
    * @returns {*}
@@ -224,7 +266,9 @@ export default class CommentsView extends AbstractStatefulView {
    * @returns {{comments}}
    */
   static parseCommentsToState = (comments) => ({
-    comments: comments
+    comments: comments,
+    emotion: null,
+    comment: null,
   });
 
   /**

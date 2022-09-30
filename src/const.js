@@ -111,6 +111,12 @@ const MAX_PAST_COMMENT_YEAR = 5;
 const ESCAPE_KEY = 'Escape';
 
 /**
+ * Наименование клавиши Enter
+ * @type {string}
+ */
+const ENTER_KEY = 'Enter';
+
+/**
  * Наименование тега ссылки
  * @type {string}
  */
@@ -156,6 +162,7 @@ export {
   MAX_LENGTH_DESCRIPTION_FILM,
   MAX_PAST_COMMENT_YEAR,
   ESCAPE_KEY,
+  ENTER_KEY,
   TAG_HREF,
   TAG_SPAN,
   ESC_KEY,
