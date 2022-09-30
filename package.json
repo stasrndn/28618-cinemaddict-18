@@ -34,6 +34,7 @@
   "dependencies": {
     "dayjs": "1.11.1",
     "dayjs-random": "1.0.1",
-    "nanoid": "4.0.0"
+    "nanoid": "4.0.0",
+    "he": "1.2.0"
   }
 }
