@@ -31,9 +31,22 @@ export default class CommentsModel extends Observable {
   };
 
   /**
-   * Метод для получения по их id
-   * @param entities - массив id комментариев
-   * @returns {*[]}
+   * Метод для удаления комментария из модели
+   * @param updateType
+   * @param update
    */
-  getCommentsById = (entities) => this.comments.filter((comment) => entities.includes(comment.id));
+  deleteComment = (updateType, update) => {
+    const index = this.comments.findIndex((comment) => comment.id === update.id);
+
+    if (index === -1) {
+      throw new Error('Can\'t delete unexisting comment');
+    }
+
+    this.#comments = [
+      ...this.#comments.slice(0, index),
+      ...this.#comments.slice(index + 1)
+    ];
+
+    this._notify(updateType, this.comments);
+  };
 }

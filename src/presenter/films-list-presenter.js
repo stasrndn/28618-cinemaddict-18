@@ -114,6 +114,12 @@ export default class FilmsListPresenter {
    */
   #renderedFilmCount = FILM_COUNT_PER_STEP;
 
+  /**
+   * Выбранный фильм для отображения в попапе
+   * @type {null}
+   */
+  #selectedFilm = null;
+
   constructor(containers, models) {
     this.#bodyContainer = containers.siteBodyElement;
     this.#boardContainer = containers.siteMainElement;
@@ -141,8 +147,16 @@ export default class FilmsListPresenter {
 
   init = () => {
     this.#renderBoard();
-    this.#models.filmsModel.addObserver(this.#handleModelEvent);
-    this.#models.filterModel.addObserver(this.#handleModelEvent);
+    this.#addModelsObservers();
+  };
+
+  /**
+   * Добавить наблюдателей к моделям
+   */
+  #addModelsObservers = () => {
+    this.#models.filmsModel.addObserver(this.#handleFilmsModelEvent);
+    this.#models.filterModel.addObserver(this.#handleFilmsModelEvent);
+    this.#models.commentsModel.addObserver(this.#handleCommentsModelEvent);
   };
 
   /**
@@ -218,8 +232,10 @@ export default class FilmsListPresenter {
    * @param film
    */
   #handleFilmClick = (film) => {
+    this.#selectedFilm = film;
+
     this.#clearPopup();
-    this.#showPopup(film);
+    this.#showPopup();
   };
 
   /**
@@ -244,15 +260,18 @@ export default class FilmsListPresenter {
       case UserAction.UPDATE_FILM:
         this.#models.filmsModel.updateFilm(updateType, update);
         break;
+      case UserAction.DELETE_COMMENT:
+        this.#models.commentsModel.deleteComment(updateType, update);
+        break;
     }
   };
 
   /**
-   * Обработчик изменений в моделях
+   * Обработчик изменений в модели фильмов
    * @param updateType
    * @param data
    */
-  #handleModelEvent = (updateType, data) => {
+  #handleFilmsModelEvent = (updateType, data) => {
     switch (updateType) {
       case UpdateType.PATCH:
         this.#filmPresenter.get(data.id).init(data);
@@ -265,20 +284,32 @@ export default class FilmsListPresenter {
   };
 
   /**
-   * Показать попап с фильмом
-   * @param film
+   * Обработчик изменений в модели комментариев
+   * @param updateType
+   * @param data
    */
-  #showPopup = (film) => {
+  #handleCommentsModelEvent = (updateType, data) => {
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this.#commentsPresenter.init(this.#selectedFilm, data);
+        break;
+    }
+  };
+
+  /**
+   * Показать попап с фильмом
+   */
+  #showPopup = () => {
     this.#popupComponent = new PopupView();
     render(this.#popupComponent, this.#bodyContainer);
 
     const popupContainer = this.#popupComponent.element.querySelector('.film-details__inner');
 
     this.#filmDetailPresenter = new FilmDetailPresenter(popupContainer, this.#handleViewAction, this.#clearPopup);
-    this.#filmDetailPresenter.init(film, this.#models);
+    this.#filmDetailPresenter.init(this.#selectedFilm, this.#models);
 
-    this.#commentsPresenter = new CommentsPresenter(popupContainer, this.#models, film);
-    this.#commentsPresenter.init();
+    this.#commentsPresenter = new CommentsPresenter(popupContainer, this.#handleViewAction);
+    this.#commentsPresenter.init(this.#selectedFilm, this.#models.commentsModel.comments);
 
     this.#bodyContainer.addEventListener('keydown', this.#handleEscapeKeyDown);
     this.#bodyContainer.classList.add('hide-overflow');

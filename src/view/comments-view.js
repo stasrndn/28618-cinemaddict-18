@@ -1,5 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import {EMOTIONS_LIST} from '../const.js';
+import {EMOTIONS_LIST, UpdateType, UserAction} from '../const.js';
 import dayjs from 'dayjs';
 
 /**
@@ -74,7 +74,7 @@ const createCommentsListItemTemplate = (comment) => (
       <p class="film-details__comment-info">
         <span class="film-details__comment-author">${comment.author}</span>
         <span class="film-details__comment-day">${dayjs(comment.date).format('YYYY/MM/DD HH:mm')}</span>
-        <button class="film-details__comment-delete">Delete</button>
+        <button class="film-details__comment-delete" data-comment-id="${comment.id}">Delete</button>
       </p>
     </div>
    </li>`
@@ -141,6 +141,14 @@ export default class CommentsView extends AbstractStatefulView {
     return createCommentsTemplate(this._state);
   }
 
+  /**
+   * Добавляет обработчик изменения в представлении
+   * @param callback
+   */
+  setHandleViewAction = (callback) => {
+    this._callback.handleViewAction = callback;
+  };
+
   _restoreHandlers = () => {
     this.#setInnerHandlers();
   };
@@ -150,6 +158,7 @@ export default class CommentsView extends AbstractStatefulView {
    */
   #setInnerHandlers = () => {
     this.#handleEmojiItems();
+    this.#handleCommentItems();
   };
 
   /**
@@ -163,7 +172,7 @@ export default class CommentsView extends AbstractStatefulView {
   };
 
   /**
-   * Установщик обработчика на
+   * Установка обработчика на
    * изменение эмоций
    */
   #handleEmojiItems = () => {
@@ -175,7 +184,53 @@ export default class CommentsView extends AbstractStatefulView {
     });
   };
 
+  /**
+   * Обработчик удаления комментария
+   * @param evt
+   */
+  #handleCommentItemClick = (evt) => {
+    evt.preventDefault();
+    const commentToBeDeleted = this.#findCommentToBeDeleted(evt.target.dataset.commentId);
+    this._callback.handleViewAction(UserAction.DELETE_COMMENT, UpdateType.PATCH, commentToBeDeleted);
+  };
+
+  /**
+   * Установка обработчиков
+   * на кнопки удаления комментариев
+   */
+  #handleCommentItems = () => {
+    const commentItems = this.element.querySelectorAll('.film-details__comment-delete');
+
+    commentItems.forEach((item) => {
+      item.addEventListener('click', this.#handleCommentItemClick);
+    });
+  };
+
+  /**
+   * Найти удаляемый объект комментария
+   * @param id
+   * @returns {*}
+   */
+  #findCommentToBeDeleted = (id) => {
+    const comments = CommentsView.parseStateToComments(this._state);
+    const index = comments.findIndex((comment) => comment.id === id);
+
+    return comments[index];
+  };
+
+  /**
+   * Преобразование данных в стейт
+   * @param comments
+   * @returns {{comments}}
+   */
   static parseCommentsToState = (comments) => ({
     comments: comments
   });
+
+  /**
+   * Преобразование данных из стейта обратно
+   * @param state
+   * @returns {*[]}
+   */
+  static parseStateToComments = (state) => [...state.comments];
 }

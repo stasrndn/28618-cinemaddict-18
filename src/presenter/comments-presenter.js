@@ -1,5 +1,5 @@
 import CommentsView from '../view/comments-view.js';
-import {render} from '../framework/render.js';
+import {remove, render, replace} from '../framework/render.js';
 
 export default class CommentsPresenter {
   /**
@@ -9,10 +9,10 @@ export default class CommentsPresenter {
   #popupContainer = null;
 
   /**
-   * Модели данных
+   * Комментарии
    * @type {null}
    */
-  #models = null;
+  #comments = null;
 
   /**
    * Выбранный фильм
@@ -26,17 +26,38 @@ export default class CommentsPresenter {
    */
   #commentsComponent = null;
 
-  constructor(popupContainer, models, film) {
+  /**
+   * Обработчик изменения модели
+   * @type {null}
+   */
+  #handleViewAction = null;
+
+  constructor(popupContainer, handleViewAction) {
     this.#popupContainer = popupContainer;
-    this.#models = models;
-    this.#film = film;
+    this.#handleViewAction = handleViewAction;
   }
 
-  init = () => {
+  init = (film, comments) => {
+    this.#film = film;
+    this.#comments = comments;
+
+    const prevCommentsComponent = this.#commentsComponent;
+
     this.#commentsComponent = new CommentsView(this.#getRelatedComments());
-    render(this.#commentsComponent, this.#popupContainer);
+    this.#commentsComponent.setHandleViewAction(this.#handleViewAction);
+
+    if (prevCommentsComponent === null) {
+      render(this.#commentsComponent, this.#popupContainer);
+      return;
+    }
+
+    replace(this.#commentsComponent, prevCommentsComponent);
+    remove(prevCommentsComponent);
   };
 
+  /**
+   * Удаление компонента
+   */
   destroy = () => {
     if (this.#commentsComponent !== null) {
       this.#commentsComponent = null;
@@ -47,5 +68,5 @@ export default class CommentsPresenter {
    * Получить комментарии, отфильтрованные по id
    * @returns {*[]}
    */
-  #getRelatedComments = () => this.#models.commentsModel.getCommentsById(this.#film.comments);
+  #getRelatedComments = () => this.#comments.filter((comment) => this.#film.comments.includes(comment.id));
 }
