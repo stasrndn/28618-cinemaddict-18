@@ -1,6 +1,6 @@
-import AbstractView from '../framework/view/abstract-view';
-import {SORT_TYPES} from '../const';
-import {isLinkClicked} from '../utils';
+import AbstractView from '../framework/view/abstract-view.js';
+import {SORT_TYPES} from '../const.js';
+import {isLinkClicked} from '../utils.js';
 
 /**
  * Формирование разметки пункта сортировки
@@ -37,7 +37,7 @@ const createSortFilterTemplate = (sortType) => {
   `;
 };
 
-export default class SortFilterView extends AbstractView {
+export default class SortView extends AbstractView {
   /**
    * Текущий тип сортировки
    * @type {null}
