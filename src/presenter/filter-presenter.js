@@ -26,6 +26,7 @@ export default class FilterPresenter {
     this.#container = container;
     this.#models = models;
 
+    this.#models.filmsModel.addObserver(this.#handleModelEvent);
     this.#models.filterModel.addObserver(this.#handleModelEvent);
   }
 
