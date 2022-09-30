@@ -29,9 +29,13 @@ export default class FilmDetailPresenter {
 
   /**
    * Модели данных
-   * @type {null}
+   * @type {{filmsModel: null, filterModel: null, commentsModel: null}}
    */
-  #models = null;
+  #models = {
+    filmsModel: null,
+    filterModel: null,
+    commentsModel: null,
+  };
 
   /**
    * Информация о текущем фильме
@@ -52,7 +56,7 @@ export default class FilmDetailPresenter {
    */
   init = (film, models) => {
     this.#film = film;
-    this.#models = models;
+    this.#models.filmsModel = models.filmsModel;
 
     this.#renderFilmDetailsComponent();
   };

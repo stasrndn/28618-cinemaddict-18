@@ -9,14 +9,18 @@ export default class FooterPresenter {
   #footerContainer = null;
 
   /**
-   * Модели приложения
-   * @type {null}
+   * Модели данных
+   * @type {{filmsModel: null, filterModel: null, commentsModel: null}}
    */
-  #models = null;
+  #models = {
+    filmsModel: null,
+    filterModel: null,
+    commentsModel: null,
+  };
 
   constructor(container, models) {
     this.#footerContainer = container.querySelector('.footer');
-    this.#models = models;
+    this.#models.filmsModel = models.filmsModel;
   }
 
   /**

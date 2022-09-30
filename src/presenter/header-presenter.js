@@ -9,14 +9,18 @@ export default class HeaderPresenter {
   #headerContainer = null;
 
   /**
-   * Модели приложения
-   * @type {null}
+   * Модели данных
+   * @type {{filmsModel: null, filterModel: null, commentsModel: null}}
    */
-  #models = null;
+  #models = {
+    filmsModel: null,
+    filterModel: null,
+    commentsModel: null,
+  };
 
   constructor(container, models) {
     this.#headerContainer = container.querySelector('.header');
-    this.#models = models;
+    this.#models.filmsModel = models.filmsModel;
   }
 
   /**

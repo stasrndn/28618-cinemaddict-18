@@ -72,10 +72,14 @@ export default class FilmsListPresenter {
   #sortComponent = null;
 
   /**
-   * Модели
-   * @type {null}
+   * Модели данных
+   * @type {{filmsModel: null, filterModel: null, commentsModel: null}}
    */
-  #models = null;
+  #models = {
+    filmsModel: null,
+    filterModel: null,
+    commentsModel: null,
+  };
 
   /**
    * Текущий тип сортировки
@@ -123,7 +127,10 @@ export default class FilmsListPresenter {
   constructor(containers, models) {
     this.#bodyContainer = containers.siteBodyElement;
     this.#boardContainer = containers.siteMainElement;
-    this.#models = models;
+
+    this.#models.filmsModel = models.filmsModel;
+    this.#models.filterModel = models.filterModel;
+    this.#models.commentsModel = models.commentsModel;
   }
 
   /**
@@ -300,19 +307,16 @@ export default class FilmsListPresenter {
    * Показать попап с фильмом
    */
   #showPopup = () => {
-    this.#popupComponent = new PopupView();
+    this.#popupComponent = new PopupView(this.#bodyContainer, this.#handleEscapeKeyDown);
+    this.#popupComponent.init();
+
     render(this.#popupComponent, this.#bodyContainer);
 
-    const popupContainer = this.#popupComponent.element.querySelector('.film-details__inner');
-
-    this.#filmDetailPresenter = new FilmDetailPresenter(popupContainer, this.#handleViewAction, this.#clearPopup);
+    this.#filmDetailPresenter = new FilmDetailPresenter(this.#popupComponent.innerContainer, this.#handleViewAction, this.#clearPopup);
     this.#filmDetailPresenter.init(this.#selectedFilm, this.#models);
 
-    this.#commentsPresenter = new CommentsPresenter(popupContainer, this.#handleViewAction);
+    this.#commentsPresenter = new CommentsPresenter(this.#popupComponent.innerContainer, this.#handleViewAction);
     this.#commentsPresenter.init(this.#selectedFilm, this.#models.commentsModel.comments);
-
-    this.#bodyContainer.addEventListener('keydown', this.#handleEscapeKeyDown);
-    this.#bodyContainer.classList.add('hide-overflow');
   };
 
   /**
@@ -326,9 +330,7 @@ export default class FilmsListPresenter {
       this.#commentsPresenter.destroy();
       this.#commentsPresenter = null;
 
-      this.#bodyContainer.querySelector('.film-details').remove();
-      this.#bodyContainer.classList.remove('hide-overflow');
-      this.#bodyContainer.removeEventListener('keydown', this.#handleEscapeKeyDown);
+      this.#popupComponent.destroy();
 
       this.#popupComponent = null;
     }

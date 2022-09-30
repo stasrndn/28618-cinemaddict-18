@@ -11,10 +11,14 @@ export default class FilterPresenter {
   #container = null;
 
   /**
-   * Модели
-   * @type {null}
+   * Модели данных
+   * @type {{filmsModel: null, filterModel: null, commentsModel: null}}
    */
-  #models = null;
+  #models = {
+    filmsModel: null,
+    filterModel: null,
+    commentsModel: null,
+  };
 
   /**
    * Компонент фильтра
@@ -24,7 +28,8 @@ export default class FilterPresenter {
 
   constructor(container, models) {
     this.#container = container;
-    this.#models = models;
+    this.#models.filmsModel = models.filmsModel;
+    this.#models.filterModel = models.filterModel;
 
     this.#models.filmsModel.addObserver(this.#handleModelEvent);
     this.#models.filterModel.addObserver(this.#handleModelEvent);
