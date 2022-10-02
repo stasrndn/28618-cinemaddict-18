@@ -329,7 +329,6 @@ export default class FilmDetailsView extends AbstractStatefulView {
     this._state.userDetails.watchlist = !this._state.userDetails.watchlist;
     this.#freezeCurrentPosition();
     this.#callFilmChangeHandler();
-    this.updateElement(this._state);
   };
 
   /**
@@ -349,7 +348,6 @@ export default class FilmDetailsView extends AbstractStatefulView {
     this._state.userDetails.alreadyWatched = !this._state.userDetails.alreadyWatched;
     this.#freezeCurrentPosition();
     this.#callFilmChangeHandler();
-    this.updateElement(this._state);
   };
 
   /**
@@ -369,7 +367,6 @@ export default class FilmDetailsView extends AbstractStatefulView {
     this._state.userDetails.favorite = !this._state.userDetails.favorite;
     this.#freezeCurrentPosition();
     this.#callFilmChangeHandler();
-    this.updateElement(this._state);
   };
 
   /**
