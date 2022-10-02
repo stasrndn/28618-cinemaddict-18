@@ -291,6 +291,10 @@ export default class FilmsListPresenter {
       case UpdateType.PATCH:
         this.#filmPresenter.get(data.id).init(data);
         break;
+      case UpdateType.MINOR:
+        this.#clearBoard();
+        this.#renderBoard();
+        break;
       case UpdateType.MAJOR:
         this.#clearBoard({resetRenderedFilmCount: true, resetSortType: true});
         this.#renderBoard();

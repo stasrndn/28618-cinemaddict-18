@@ -199,7 +199,7 @@ export default class FilmView extends AbstractStatefulView {
    * Вызвать обработчик изменения фильма
    */
   #callFilmChangeHandler = () => {
-    this._callback.handleViewAction(UserAction.UPDATE_FILM, UpdateType.PATCH, FilmView.parseStateToFilm(this._state));
+    this._callback.handleViewAction(UserAction.UPDATE_FILM, UpdateType.MINOR, FilmView.parseStateToFilm(this._state));
   };
 
   /**
