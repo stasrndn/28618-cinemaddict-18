@@ -16,6 +16,8 @@ import {sortByDateRelease, sortByRating} from '../utils/film.js';
 import {remove, render} from '../framework/render.js';
 import {isEscapeKey} from '../utils';
 
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
+
 export default class FilmsListPresenter {
   /**
    * Контейнер HTML документа
@@ -123,6 +125,8 @@ export default class FilmsListPresenter {
    * @type {null}
    */
   #selectedFilm = null;
+
+  #uiBlocker = new UiBlocker(350, 1000);
 
   constructor(containers, models) {
     this.#bodyContainer = containers.siteBodyElement;
@@ -262,11 +266,15 @@ export default class FilmsListPresenter {
    * @param update
    */
   #handleViewAction = (actionType, updateType, update) => {
+    this.#uiBlocker.block();
+
     switch (actionType) {
       case UserAction.UPDATE_FILM:
         this.#models.filmsModel.updateFilm(updateType, update);
         break;
     }
+
+    this.#uiBlocker.unblock();
   };
 
   /**
@@ -301,7 +309,7 @@ export default class FilmsListPresenter {
     this.#filmDetailPresenter = new FilmDetailPresenter(this.#popupComponent.innerContainer, this.#handleViewAction, this.#clearPopup);
     this.#filmDetailPresenter.init(this.#selectedFilm, this.#models);
 
-    this.#commentsPresenter = new CommentsPresenter(this.#popupComponent.innerContainer, this.#models.commentsModel);
+    this.#commentsPresenter = new CommentsPresenter(this.#popupComponent.innerContainer, this.#models.commentsModel, this.#uiBlocker);
     this.#commentsPresenter.init(this.#selectedFilm);
   };
 

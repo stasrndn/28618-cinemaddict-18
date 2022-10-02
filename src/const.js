@@ -173,6 +173,12 @@ const ID_SIZE = 10;
  */
 const FILM_COUNT_PER_STEP = 5;
 
+/**
+ * Название кнопки во время удаления комментария
+ * @type {string}
+ */
+const DELETE_COMMENT_BUTTON_TEXT = 'Deleting...';
+
 export {
   FilterType,
   SortType,
@@ -182,6 +188,7 @@ export {
   MAX_FILM_COMMENT_COUNT,
   MAX_LENGTH_DESCRIPTION_FILM,
   MAX_PAST_COMMENT_YEAR,
+  DELETE_COMMENT_BUTTON_TEXT,
   ESCAPE_KEY,
   ENTER_KEY,
   TAG_HREF,

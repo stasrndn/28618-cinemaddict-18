@@ -1,6 +1,6 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {isCtrlEnterPressed} from '../utils.js';
-import {EMOTIONS_LIST, UpdateType, UserAction} from '../const.js';
+import {DELETE_COMMENT_BUTTON_TEXT, EMOTIONS_LIST, UpdateType, UserAction} from '../const.js';
 import dayjs from 'dayjs';
 import he from 'he';
 
@@ -207,6 +207,7 @@ export default class CommentsView extends AbstractStatefulView {
    */
   #handleCommentItemClick = (evt) => {
     evt.preventDefault();
+    evt.target.textContent = DELETE_COMMENT_BUTTON_TEXT;
     const commentToBeDeleted = this.#findCommentToBeDeleted(evt.target.dataset.commentId);
     this._callback.handleViewAction(UserAction.DELETE_COMMENT, UpdateType.PATCH, commentToBeDeleted);
   };
@@ -235,7 +236,7 @@ export default class CommentsView extends AbstractStatefulView {
   #handleCommentKeydown = (evt) => {
     if (isCtrlEnterPressed(evt)) {
       evt.preventDefault();
-      this._callback.handleViewAction(UserAction.ADD_COMMENT, UpdateType.MINOR, this.#parseLocalComment());
+      //this._callback.handleViewAction(UserAction.ADD_COMMENT, UpdateType.MINOR, this.#parseLocalComment());
     }
   };
 

@@ -27,9 +27,17 @@ export default class CommentsPresenter {
    */
   #commentsModel = null;
 
-  constructor(popupContainer, commentsModel) {
+  /**
+   * Блокировщик интерфейса
+   * @type {null}
+   */
+  #uiBlocker = null;
+
+  constructor(popupContainer, commentsModel, uiBlocker) {
     this.#popupContainer = popupContainer;
     this.#commentsModel = commentsModel;
+    this.#uiBlocker = uiBlocker;
+
     this.#commentsModel.addObserver(this.#handleCommentsModelEvent);
   }
 
@@ -66,6 +74,8 @@ export default class CommentsPresenter {
   };
 
   #handleViewAction = (actionType, updateType, update) => {
+    this.#uiBlocker.block();
+
     switch (actionType) {
       case UserAction.DELETE_COMMENT:
         this.#commentsModel.deleteComment(updateType, update);
@@ -75,6 +85,8 @@ export default class CommentsPresenter {
         this.#commentsModel.addComment(updateType, update);
         break;
     }
+
+    this.#uiBlocker.unblock();
   };
 
   /**
