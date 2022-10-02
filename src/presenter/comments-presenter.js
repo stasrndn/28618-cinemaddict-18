@@ -1,5 +1,5 @@
 import CommentsView from '../view/comments-view.js';
-import {UpdateType, UserAction} from '../const.js';
+import {UserAction} from '../const.js';
 import {remove, render, replace} from '../framework/render.js';
 
 export default class CommentsPresenter {
@@ -167,14 +167,6 @@ export default class CommentsPresenter {
    * @param comments
    */
   #handleCommentsModelEvent = (updateType, comments) => {
-    switch (updateType) {
-      case UpdateType.INIT:
-      case UpdateType.PATCH:
-        this.#renderCommentsComponent(comments);
-        break;
-      case UpdateType.MINOR:
-        this.init(this.#film);
-        break;
-    }
+    this.#renderCommentsComponent(comments);
   };
 }
