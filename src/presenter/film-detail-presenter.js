@@ -71,6 +71,10 @@ export default class FilmDetailPresenter {
     }
   };
 
+  shakeControls = () => {
+    this.#filmDetailsComponent.shakeControls();
+  };
+
   /**
    * Отрисовать всплывающее окно с фильмом
    */

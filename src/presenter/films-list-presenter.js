@@ -265,12 +265,16 @@ export default class FilmsListPresenter {
    * @param updateType
    * @param update
    */
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
     this.#uiBlocker.block();
 
     switch (actionType) {
       case UserAction.UPDATE_FILM:
-        this.#models.filmsModel.updateFilm(updateType, update);
+        try {
+          await this.#models.filmsModel.updateFilm(updateType, update);
+        } catch (e) {
+          this.#filmDetailPresenter.shakeControls();
+        }
         break;
     }
 
