@@ -1,5 +1,7 @@
 import HeaderProfileView from '../view/header-profile-view.js';
 import {remove, render, replace} from '../framework/render.js';
+import {filter} from '../utils/filter';
+import {FilterType} from '../const';
 
 export default class HeaderPresenter {
   /**
@@ -40,8 +42,7 @@ export default class HeaderPresenter {
     }
 
     const prevHeaderProfileComponent = this.#headerProfileComponent;
-
-    this.#headerProfileComponent = new HeaderProfileView();
+    this.#headerProfileComponent = new HeaderProfileView(this.#getCountWatchedFilms());
 
     if (prevHeaderProfileComponent === null) {
       render(this.#headerProfileComponent, this.#headerContainer);
@@ -51,6 +52,12 @@ export default class HeaderPresenter {
     replace(this.#headerProfileComponent, prevHeaderProfileComponent);
     remove(prevHeaderProfileComponent);
   };
+
+  /**
+   * Получить количество просмотренных фильмов пользователем
+   * @returns {*}
+   */
+  #getCountWatchedFilms = () => filter[FilterType.HISTORY](this.#models.filmsModel.films)?.length;
 
   /**
    * Обработчик на изменение в модели фильмов

@@ -83,6 +83,16 @@ const UserAction = {
 };
 
 /**
+ * Звания пользователя
+ * @type {{FAN: string, MOVIE_BUFF: string, NOVICE: string}}
+ */
+const UserType = {
+  NOVICE: 'novice',
+  FAN: 'fan',
+  MOVIE_BUFF: 'movie buff',
+};
+
+/**
  * Максимальное количество фильмов,
  * отдаваемых моделью
  * @type {number}
@@ -183,5 +193,6 @@ export {
   EMOTIONS_LIST,
   UpdateType,
   UserAction,
+  UserType,
   Method,
 };
