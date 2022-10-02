@@ -70,7 +70,6 @@ const createFilmCardGenreTemplate = (genre) => (
  * @returns {string}
  */
 const createFilmCardTemplate = (state) => {
-
   const {title, totalRating, description, poster, release, runtime, genre} = state.filmInfo;
 
   const posterTemplate = createFilmCardPosterTemplate(poster);
@@ -84,7 +83,7 @@ const createFilmCardTemplate = (state) => {
     `<article class="film-card">
       <a class="film-card__link">
         <h3 class="film-card__title">${title}</h3>
-        <p class="film-card__rating">${totalRating}</p>
+        <p class="film-card__rating">${totalRating ? `${totalRating}` : ''}</p>
         <p class="film-card__info">
           ${yearReleaseTemplate}
           ${runtimeTemplate}

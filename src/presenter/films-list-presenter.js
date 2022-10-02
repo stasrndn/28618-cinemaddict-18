@@ -277,7 +277,7 @@ export default class FilmsListPresenter {
   #handleFilmsModelEvent = (updateType, data) => {
     switch (updateType) {
       case UpdateType.PATCH:
-        this.#filmPresenter.get(data.id).init();
+        this.#filmPresenter.get(data.id).init(data);
         break;
       case UpdateType.MAJOR:
         this.#clearBoard({resetRenderedFilmCount: true, resetSortType: true});

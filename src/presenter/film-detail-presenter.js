@@ -1,5 +1,6 @@
 import FilmDetailsView from '../view/film-details-view.js';
 import {remove, render, replace} from '../framework/render.js';
+import {UpdateType} from '../const';
 
 export default class FilmDetailPresenter {
   /**
@@ -91,7 +92,11 @@ export default class FilmDetailPresenter {
     remove(prevFilmDetailsComponent);
   };
 
-  #handleModelEvent = () => {
-    this.#filmDetailsComponent?.updateData();
+  #handleModelEvent = (updateType, data) => {
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this.#filmDetailsComponent?.updateData(data);
+        break;
+    }
   };
 }
