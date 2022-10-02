@@ -73,12 +73,15 @@ export default class CommentsPresenter {
     remove(prevCommentsComponent);
   };
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
     this.#uiBlocker.block();
 
     switch (actionType) {
       case UserAction.DELETE_COMMENT:
-        this.#commentsModel.deleteComment(updateType, update);
+        try {
+          await this.#commentsModel.deleteComment(updateType, update);
+        } catch (e) {
+        }
         break;
       case UserAction.ADD_COMMENT:
         update.film = this.#film;
