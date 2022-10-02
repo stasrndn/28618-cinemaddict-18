@@ -10,7 +10,7 @@ dayjs.extend(duration);
  * @returns {string}
  */
 const createFilmDetailsPosterTemplate = (poster) => (
-  `${poster.length ? `<img class="film-details__poster-img" src="${poster}" alt="">` : ''}`
+  `${poster?.length ? `<img class="film-details__poster-img" src="${poster}" alt="">` : ''}`
 );
 
 /**
@@ -19,9 +19,9 @@ const createFilmDetailsPosterTemplate = (poster) => (
  * @returns {string}
  */
 const createFilmDetailsTotalRatingTemplate = (totalRating) => (
-  `<div class="film-details__rating">
+  `${totalRating ? `<div class="film-details__rating">
     <p class="film-details__total-rating">${totalRating}</p>
-  </div>`
+  </div>` : ''}`
 );
 
 /**
@@ -30,7 +30,7 @@ const createFilmDetailsTotalRatingTemplate = (totalRating) => (
  * @returns {string}
  */
 const createFilmDetailsTitleTemplate = (title) => (
-  `${title.length
+  `${title?.length
     ? `<h3 class="film-details__title">${title}</h3>`
     : ''}`
 );
@@ -41,7 +41,7 @@ const createFilmDetailsTitleTemplate = (title) => (
  * @returns {string}
  */
 const createFilmDetailsAlternativeTitleTemplate = (alternativeTitle) => (
-  `${alternativeTitle.length
+  `${alternativeTitle?.length
     ? `<p class="film-details__title-original">Original: ${alternativeTitle}</p>`
     : ''}`
 );
@@ -52,7 +52,7 @@ const createFilmDetailsAlternativeTitleTemplate = (alternativeTitle) => (
  * @returns {string}
  */
 const createFilmDetailsDirectorTemplate = (director) => (
-  `${director.length
+  `${director?.length
     ? `<tr class="film-details__row">
         <td class="film-details__term">Director</td>
         <td class="film-details__cell">${director}</td>
@@ -66,7 +66,7 @@ const createFilmDetailsDirectorTemplate = (director) => (
  * @returns {string}
  */
 const createFilmDetailsWritersTemplate = (writers) => (
-  `${writers.length
+  `${writers?.length
     ? `<tr class="film-details__row">
           <td class="film-details__term">${writers.length > 1 ? 'Writers' : 'Writer'}</td>
           <td class="film-details__cell">${writers.join(', ')}</td>
@@ -80,7 +80,7 @@ const createFilmDetailsWritersTemplate = (writers) => (
  * @returns {string}
  */
 const createFilmDetailsActorsTemplate = (actors) => (
-  `${actors.length
+  `${actors?.length
     ? `<tr class="film-details__row">
           <td class="film-details__term">${actors.length > 1 ? 'Actors' : 'Actor'}</td>
           <td class="film-details__cell">${actors.join(', ')}</td>
@@ -94,7 +94,7 @@ const createFilmDetailsActorsTemplate = (actors) => (
  * @returns {string}
  */
 const createFilmDetailsReleaseDateTemplate = (release) => (
-  `${release.date.length
+  `${release.date?.length
     ? `<tr class="film-details__row">
           <td class="film-details__term">Release Date</td>
           <td class="film-details__cell">${dayjs(release.date).format('DD MMMM YYYY')}</td>
@@ -124,7 +124,7 @@ const createFilmDetailsRuntimeTemplate = (runtime) => (
  * @returns {string}
  */
 const createFilmDetailsGenresTemplate = (genres) => (
-  `${genres.length
+  `${genres?.length
     ? `<tr class="film-details__row">
         <td class="film-details__term">${genres.length > 1 ? 'Genres' : 'Genre'}</td>
         <td class="film-details__cell">
@@ -139,7 +139,7 @@ const createFilmDetailsGenresTemplate = (genres) => (
  * @returns {string}
  */
 const createFilmDetailsCountryTemplate = (release) => (
-  `${release.releaseCountry.length
+  `${release.releaseCountry?.length
     ? `<tr class="film-details__row">
         <td class="film-details__term">Country</td>
         <td class="film-details__cell">${release.releaseCountry}</td>
@@ -153,7 +153,7 @@ const createFilmDetailsCountryTemplate = (release) => (
  * @returns {string}
  */
 const createFilmDetailsDescriptionTemplate = (description) => (
-  `${description.length
+  `${description?.length
     ? `<p class="film-details__film-description">${description}</p>`
     : ''}`
 );
@@ -170,7 +170,6 @@ const createFilmDetailsAgeRatingTemplate = (ageRating) => (
 );
 
 const createFilmDetailsTemplate = (state) => {
-
   const {
     poster,
     totalRating,
@@ -280,9 +279,9 @@ export default class FilmDetailsView extends AbstractStatefulView {
     this._callback.filmDetailDeleteHandler = callback;
   };
 
-  updateData = () => {
+  updateData = (film) => {
     this.#freezeCurrentPosition();
-    this.updateElement(this._state);
+    this.updateElement(FilmDetailsView.parseFilmToState(film));
   };
 
   _restoreHandlers = () => {
@@ -330,7 +329,6 @@ export default class FilmDetailsView extends AbstractStatefulView {
     this._state.userDetails.watchlist = !this._state.userDetails.watchlist;
     this.#freezeCurrentPosition();
     this.#callFilmChangeHandler();
-    this.updateElement(this._state);
   };
 
   /**
@@ -350,7 +348,6 @@ export default class FilmDetailsView extends AbstractStatefulView {
     this._state.userDetails.alreadyWatched = !this._state.userDetails.alreadyWatched;
     this.#freezeCurrentPosition();
     this.#callFilmChangeHandler();
-    this.updateElement(this._state);
   };
 
   /**
@@ -370,7 +367,6 @@ export default class FilmDetailsView extends AbstractStatefulView {
     this._state.userDetails.favorite = !this._state.userDetails.favorite;
     this.#freezeCurrentPosition();
     this.#callFilmChangeHandler();
-    this.updateElement(this._state);
   };
 
   /**

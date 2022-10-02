@@ -1,4 +1,5 @@
 import CommentsView from '../view/comments-view.js';
+import {UpdateType, UserAction} from '../const.js';
 import {remove, render, replace} from '../framework/render.js';
 
 export default class CommentsPresenter {
@@ -7,12 +8,6 @@ export default class CommentsPresenter {
    * @type {null}
    */
   #popupContainer = null;
-
-  /**
-   * Комментарии
-   * @type {null}
-   */
-  #comments = null;
 
   /**
    * Выбранный фильм
@@ -27,32 +22,20 @@ export default class CommentsPresenter {
   #commentsComponent = null;
 
   /**
-   * Обработчик изменения модели
+   * Модель комментариев
    * @type {null}
    */
-  #handleViewAction = null;
+  #commentsModel = null;
 
-  constructor(popupContainer, handleViewAction) {
+  constructor(popupContainer, commentsModel) {
     this.#popupContainer = popupContainer;
-    this.#handleViewAction = handleViewAction;
+    this.#commentsModel = commentsModel;
+    this.#commentsModel.addObserver(this.#handleCommentsModelEvent);
   }
 
-  init = (film, comments) => {
+  init = (film) => {
     this.#film = film;
-    this.#comments = comments;
-
-    const prevCommentsComponent = this.#commentsComponent;
-
-    this.#commentsComponent = new CommentsView(this.#getRelatedComments());
-    this.#commentsComponent.setHandleViewAction(this.#handleViewAction);
-
-    if (prevCommentsComponent === null) {
-      render(this.#commentsComponent, this.#popupContainer);
-      return;
-    }
-
-    replace(this.#commentsComponent, prevCommentsComponent);
-    remove(prevCommentsComponent);
+    this.#commentsModel.init(film);
   };
 
   /**
@@ -65,8 +48,49 @@ export default class CommentsPresenter {
   };
 
   /**
-   * Получить комментарии, отфильтрованные по id
-   * @returns {*[]}
+   * Отрисовка компонента комментариев
+   * @param comments
    */
-  #getRelatedComments = () => this.#comments.filter((comment) => this.#film.comments.includes(comment.id));
+  #renderCommentsComponent = (comments) => {
+    const prevCommentsComponent = this.#commentsComponent;
+    this.#commentsComponent = new CommentsView(comments);
+    this.#commentsComponent.setHandleViewAction(this.#handleViewAction);
+
+    if (prevCommentsComponent === null) {
+      render(this.#commentsComponent, this.#popupContainer);
+      return;
+    }
+
+    replace(this.#commentsComponent, prevCommentsComponent);
+    remove(prevCommentsComponent);
+  };
+
+  #handleViewAction = (actionType, updateType, update) => {
+    switch (actionType) {
+      case UserAction.DELETE_COMMENT:
+        this.#commentsModel.deleteComment(updateType, update);
+        break;
+      case UserAction.ADD_COMMENT:
+        update.film = this.#film;
+        this.#commentsModel.addComment(updateType, update);
+        break;
+    }
+  };
+
+  /**
+   * Обработчик изменений в модели комментариев
+   * @param updateType
+   * @param comments
+   */
+  #handleCommentsModelEvent = (updateType, comments) => {
+    switch (updateType) {
+      case UpdateType.INIT:
+      case UpdateType.PATCH:
+        this.#renderCommentsComponent(comments);
+        break;
+      case UpdateType.MINOR:
+        this.init(this.#film);
+        break;
+    }
+  };
 }

@@ -1,8 +1,10 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {isAlreadyWatched, isFavorite, isWatchlist} from '../utils/film.js';
 import {MAX_LENGTH_DESCRIPTION_FILM, UpdateType, UserAction} from '../const.js';
+import {isControlButton} from '../utils.js';
 import dayjs from 'dayjs';
-import {isControlButton} from '../utils';
+import duration from 'dayjs/plugin/duration';
+dayjs.extend(duration);
 
 /**
  * Шаблон блока комментариев карточки
@@ -54,7 +56,7 @@ const createFilmCardYearReleaseTemplate = (release) => (
  */
 const createFilmCardRuntimeTemplate = (runtime) => (
   `${runtime.length !== ''
-    ? `<span class="film-card__duration">${runtime}</span>`
+    ? `<span class="film-card__duration">${dayjs.duration(runtime, 'm').format('H[h] mm[m]')}</span>`
     : ''}`
 );
 
@@ -70,7 +72,6 @@ const createFilmCardGenreTemplate = (genre) => (
  * @returns {string}
  */
 const createFilmCardTemplate = (state) => {
-
   const {title, totalRating, description, poster, release, runtime, genre} = state.filmInfo;
 
   const posterTemplate = createFilmCardPosterTemplate(poster);
@@ -84,7 +85,7 @@ const createFilmCardTemplate = (state) => {
     `<article class="film-card">
       <a class="film-card__link">
         <h3 class="film-card__title">${title}</h3>
-        <p class="film-card__rating">${totalRating}</p>
+        <p class="film-card__rating">${totalRating ? `${totalRating}` : ''}</p>
         <p class="film-card__info">
           ${yearReleaseTemplate}
           ${runtimeTemplate}
@@ -161,7 +162,6 @@ export default class FilmView extends AbstractStatefulView {
     evt.preventDefault();
     this._state.userDetails.watchlist = !this._state.userDetails.watchlist;
     this.#callFilmChangeHandler();
-    this.updateElement(this._state);
   };
 
   /**
@@ -172,7 +172,6 @@ export default class FilmView extends AbstractStatefulView {
     evt.preventDefault();
     this._state.userDetails.alreadyWatched = !this._state.userDetails.alreadyWatched;
     this.#callFilmChangeHandler();
-    this.updateElement(this._state);
   };
 
   /**
@@ -183,7 +182,6 @@ export default class FilmView extends AbstractStatefulView {
     evt.preventDefault();
     this._state.userDetails.favorite = !this._state.userDetails.favorite;
     this.#callFilmChangeHandler();
-    this.updateElement(this._state);
   };
 
   /**

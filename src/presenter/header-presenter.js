@@ -1,5 +1,7 @@
 import HeaderProfileView from '../view/header-profile-view.js';
-import {render} from '../framework/render.js';
+import {remove, render, replace} from '../framework/render.js';
+import {filter} from '../utils/filter';
+import {FilterType} from '../const';
 
 export default class HeaderPresenter {
   /**
@@ -18,9 +20,17 @@ export default class HeaderPresenter {
     commentsModel: null,
   };
 
+  /**
+   * Компонент профиля
+   * @type {null}
+   */
+  #headerProfileComponent = null;
+
   constructor(container, models) {
     this.#headerContainer = container.querySelector('.header');
+
     this.#models.filmsModel = models.filmsModel;
+    this.#models.filmsModel.addObserver(this.#handleModelEvent);
   }
 
   /**
@@ -31,7 +41,28 @@ export default class HeaderPresenter {
       return;
     }
 
-    const headerProfileComponent = new HeaderProfileView();
-    render(headerProfileComponent, this.#headerContainer);
+    const prevHeaderProfileComponent = this.#headerProfileComponent;
+    this.#headerProfileComponent = new HeaderProfileView(this.#getCountWatchedFilms());
+
+    if (prevHeaderProfileComponent === null) {
+      render(this.#headerProfileComponent, this.#headerContainer);
+      return;
+    }
+
+    replace(this.#headerProfileComponent, prevHeaderProfileComponent);
+    remove(prevHeaderProfileComponent);
+  };
+
+  /**
+   * Получить количество просмотренных фильмов пользователем
+   * @returns {*}
+   */
+  #getCountWatchedFilms = () => filter[FilterType.HISTORY](this.#models.filmsModel.films)?.length;
+
+  /**
+   * Обработчик на изменение в модели фильмов
+   */
+  #handleModelEvent = () => {
+    this.init();
   };
 }
