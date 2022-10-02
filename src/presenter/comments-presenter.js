@@ -56,6 +56,68 @@ export default class CommentsPresenter {
   };
 
   /**
+   * Установить статус удаления у комментария
+   * @param id
+   */
+  setDeleting = (id) => {
+    this.#commentsComponent.updateElement({
+      comments: this.#commentsComponent.comments.map((comment) => {
+        if (id === comment.id) {
+          return {
+            ...comment,
+            isDeleting: true,
+            isDisabled: true,
+          };
+        }
+        return comment;
+      })
+    });
+  };
+
+  /**
+   * Установить статус отмены удаления при ошибке
+   * @param id
+   */
+  setAborting = (id) => {
+    this.#commentsComponent.updateElement({
+      comments: this.#commentsComponent.comments.map((comment) => {
+        if (id === comment.id) {
+          return {
+            ...comment,
+            isDeleting: false,
+            isDisabled: false,
+          };
+        }
+        return comment;
+      })
+    });
+
+    this.#commentsComponent.shakeComment(id);
+  };
+
+  /**
+   * Установить статус отправления комментария
+   */
+  setAdding = () => {
+    this.#commentsComponent.updateElement({
+      isSaving: true,
+      isDisabled: true,
+    });
+  };
+
+  /**
+   * Удаления статуса отправления нового комментария
+   */
+  setAddingAborting = () => {
+    this.#commentsComponent.updateElement({
+      isSaving: false,
+      isDisabled: false,
+    });
+
+    this.#commentsComponent.shakeFormNewComment();
+  };
+
+  /**
    * Отрисовка компонента комментариев
    * @param comments
    */
@@ -79,13 +141,20 @@ export default class CommentsPresenter {
     switch (actionType) {
       case UserAction.DELETE_COMMENT:
         try {
+          this.setDeleting(update.id);
           await this.#commentsModel.deleteComment(updateType, update);
         } catch (e) {
+          this.setAborting(update.id);
         }
         break;
       case UserAction.ADD_COMMENT:
-        update.film = this.#film;
-        this.#commentsModel.addComment(updateType, update);
+        try {
+          this.setAdding();
+          update.film = this.#film;
+          await this.#commentsModel.addComment(updateType, update);
+        } catch (e) {
+          this.setAddingAborting();
+        }
         break;
     }
 
