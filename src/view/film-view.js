@@ -1,8 +1,10 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {isAlreadyWatched, isFavorite, isWatchlist} from '../utils/film.js';
 import {MAX_LENGTH_DESCRIPTION_FILM, UpdateType, UserAction} from '../const.js';
+import {isControlButton} from '../utils.js';
 import dayjs from 'dayjs';
-import {isControlButton} from '../utils';
+import duration from 'dayjs/plugin/duration';
+dayjs.extend(duration);
 
 /**
  * Шаблон блока комментариев карточки
@@ -54,7 +56,7 @@ const createFilmCardYearReleaseTemplate = (release) => (
  */
 const createFilmCardRuntimeTemplate = (runtime) => (
   `${runtime.length !== ''
-    ? `<span class="film-card__duration">${runtime}</span>`
+    ? `<span class="film-card__duration">${dayjs.duration(runtime, 'm').format('H[h] mm[m]')}</span>`
     : ''}`
 );
 
