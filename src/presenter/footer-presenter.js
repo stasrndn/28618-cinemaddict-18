@@ -1,5 +1,5 @@
 import FooterStatisticsView from '../view/footer-statistics-view.js';
-import {render} from '../framework/render.js';
+import {remove, render, replace} from '../framework/render.js';
 
 export default class FooterPresenter {
   /**
@@ -18,9 +18,17 @@ export default class FooterPresenter {
     commentsModel: null,
   };
 
+  /**
+   * Компонент со статистикой по фильмам
+   * @type {null}
+   */
+  #footerStatisticsComponent = null;
+
   constructor(container, models) {
     this.#footerContainer = container.querySelector('.footer');
+
     this.#models.filmsModel = models.filmsModel;
+    this.#models.filmsModel.addObserver(this.#handleModelEvent);
   }
 
   /**
@@ -28,7 +36,23 @@ export default class FooterPresenter {
    */
   init = () => {
     const filmsCount = this.#models.filmsModel.films.length;
-    const footerStatisticsComponent = new FooterStatisticsView(filmsCount);
-    render(footerStatisticsComponent, this.#footerContainer);
+    const prevFooterStatisticsComponent = this.#footerStatisticsComponent;
+
+    this.#footerStatisticsComponent = new FooterStatisticsView(filmsCount);
+
+    if (prevFooterStatisticsComponent === null) {
+      render(this.#footerStatisticsComponent, this.#footerContainer);
+      return;
+    }
+
+    replace(this.#footerStatisticsComponent, prevFooterStatisticsComponent);
+    remove(prevFooterStatisticsComponent);
+  };
+
+  /**
+   * Обработчик на изменение в модели фильмов
+   */
+  #handleModelEvent = () => {
+    this.init();
   };
 }

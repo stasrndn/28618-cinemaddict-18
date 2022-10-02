@@ -163,7 +163,6 @@ export default class FilmsListPresenter {
   #addModelsObservers = () => {
     this.#models.filmsModel.addObserver(this.#handleFilmsModelEvent);
     this.#models.filterModel.addObserver(this.#handleFilmsModelEvent);
-    this.#models.commentsModel.addObserver(this.#handleCommentsModelEvent);
   };
 
   /**
@@ -267,9 +266,6 @@ export default class FilmsListPresenter {
       case UserAction.UPDATE_FILM:
         this.#models.filmsModel.updateFilm(updateType, update);
         break;
-      case UserAction.DELETE_COMMENT:
-        this.#models.commentsModel.deleteComment(updateType, update);
-        break;
     }
   };
 
@@ -281,24 +277,14 @@ export default class FilmsListPresenter {
   #handleFilmsModelEvent = (updateType, data) => {
     switch (updateType) {
       case UpdateType.PATCH:
-        this.#filmPresenter.get(data.id).init(data);
+        this.#filmPresenter.get(data.id).init();
         break;
       case UpdateType.MAJOR:
         this.#clearBoard({resetRenderedFilmCount: true, resetSortType: true});
         this.#renderBoard();
         break;
-    }
-  };
-
-  /**
-   * Обработчик изменений в модели комментариев
-   * @param updateType
-   * @param data
-   */
-  #handleCommentsModelEvent = (updateType, data) => {
-    switch (updateType) {
-      case UpdateType.PATCH:
-        this.#commentsPresenter.init(this.#selectedFilm, data);
+      case UpdateType.INIT:
+        this.init();
         break;
     }
   };
@@ -315,8 +301,8 @@ export default class FilmsListPresenter {
     this.#filmDetailPresenter = new FilmDetailPresenter(this.#popupComponent.innerContainer, this.#handleViewAction, this.#clearPopup);
     this.#filmDetailPresenter.init(this.#selectedFilm, this.#models);
 
-    this.#commentsPresenter = new CommentsPresenter(this.#popupComponent.innerContainer, this.#handleViewAction);
-    this.#commentsPresenter.init(this.#selectedFilm, this.#models.commentsModel.comments);
+    this.#commentsPresenter = new CommentsPresenter(this.#popupComponent.innerContainer, this.#models.commentsModel);
+    this.#commentsPresenter.init(this.#selectedFilm);
   };
 
   /**

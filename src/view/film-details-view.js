@@ -170,7 +170,6 @@ const createFilmDetailsAgeRatingTemplate = (ageRating) => (
 );
 
 const createFilmDetailsTemplate = (state) => {
-
   const {
     poster,
     totalRating,

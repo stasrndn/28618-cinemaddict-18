@@ -57,6 +57,17 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT',
+};
+
+/**
+ * Методы запросов к серверу
+ * @type {{POST: string, PUT: string}}
+ */
+const Method = {
+  POST: 'POST',
+  PUT: 'PUT',
+  DELETE: 'DELETE',
 };
 
 /**
@@ -68,7 +79,7 @@ const UserAction = {
   ADD_FILM: 'ADD_FILM',
   DELETE_FILM: 'DELETE_FILM',
   ADD_COMMENT: 'ADD_COMMENT',
-  DELETE_COMMENT: '',
+  DELETE_COMMENT: 'DELETE_COMMENT',
 };
 
 /**
@@ -172,4 +183,5 @@ export {
   EMOTIONS_LIST,
   UpdateType,
   UserAction,
+  Method,
 };

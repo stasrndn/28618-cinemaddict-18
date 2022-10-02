@@ -235,7 +235,7 @@ export default class CommentsView extends AbstractStatefulView {
   #handleCommentKeydown = (evt) => {
     if (isCtrlEnterPressed(evt)) {
       evt.preventDefault();
-      // отправка комментария
+      this._callback.handleViewAction(UserAction.ADD_COMMENT, UpdateType.MINOR, this.#parseLocalComment());
     }
   };
 
@@ -260,6 +260,15 @@ export default class CommentsView extends AbstractStatefulView {
 
     return comments[index];
   };
+
+  /**
+   * Сборка объекта комментария перед отправкой в презентер
+   * @returns {{emotion: (null|*), comment: (Document.comment|null|*)}}
+   */
+  #parseLocalComment = () => ({
+    comment: this._state.comment,
+    emotion: this._state.emotion,
+  });
 
   /**
    * Преобразование данных в стейт

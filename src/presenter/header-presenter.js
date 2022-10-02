@@ -20,7 +20,9 @@ export default class HeaderPresenter {
 
   constructor(container, models) {
     this.#headerContainer = container.querySelector('.header');
+
     this.#models.filmsModel = models.filmsModel;
+    this.#models.filmsModel.addObserver(this.#handleModelEvent);
   }
 
   /**
@@ -33,5 +35,12 @@ export default class HeaderPresenter {
 
     const headerProfileComponent = new HeaderProfileView();
     render(headerProfileComponent, this.#headerContainer);
+  };
+
+  /**
+   * Обработчик на изменение в модели фильмов
+   */
+  #handleModelEvent = () => {
+    this.init();
   };
 }
