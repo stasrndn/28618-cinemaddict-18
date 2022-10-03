@@ -41,6 +41,7 @@ export default class CommentsModel extends Observable {
       delete update.film;
 
       const {comments} = await this.#apiService.addComment(update, film);
+      this.#comments = comments;
       this._notify(updateType, comments);
     } catch (e) {
       throw new Error('Can\'t add comment');
