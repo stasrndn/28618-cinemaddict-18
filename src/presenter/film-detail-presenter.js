@@ -71,6 +71,9 @@ export default class FilmDetailPresenter {
     }
   };
 
+  /**
+   * Эффект потряхивания компонента
+   */
   shakeControls = () => {
     this.#filmDetailsComponent.shakeControls();
   };

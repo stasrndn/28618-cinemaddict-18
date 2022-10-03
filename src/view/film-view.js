@@ -132,6 +132,14 @@ export default class FilmView extends AbstractStatefulView {
   };
 
   /**
+   * Потрусить панель управления
+   */
+  shakeControls = () => {
+    const controlsPanel = this.element.querySelector('.film-card__controls');
+    this.shakeAbsolute.call({element: controlsPanel});
+  };
+
+  /**
    * Восстановление внутренних обработчиков
    * @private
    */

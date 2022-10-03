@@ -273,7 +273,8 @@ export default class FilmsListPresenter {
         try {
           await this.#models.filmsModel.updateFilm(updateType, update);
         } catch (e) {
-          this.#filmDetailPresenter.shakeControls();
+          this.#filmPresenter.get(update.id).shakeControls();
+          this.#filmDetailPresenter?.shakeControls();
         }
         break;
     }

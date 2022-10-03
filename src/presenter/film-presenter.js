@@ -53,6 +53,13 @@ export default class FilmPresenter {
   };
 
   /**
+   * Эффект потряхивания компонента
+   */
+  shakeControls = () => {
+    this.#filmComponent.shakeControls();
+  };
+
+  /**
    * Удаляет компонент:
    * - удаление экземпляра
    * - удаление представления из DOM-дерева
