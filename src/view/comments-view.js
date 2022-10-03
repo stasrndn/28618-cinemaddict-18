@@ -2,6 +2,8 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {isCtrlEnterPressed} from '../utils/common.js';
 import {EMOTIONS_LIST, UpdateType, UserAction} from '../const.js';
 import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.extend(relativeTime);
 import he from 'he';
 
 /**
@@ -75,7 +77,7 @@ const createCommentsListItemTemplate = (comment) => (
       <p class="film-details__comment-text">${he.encode(comment.comment)}</p>
       <p class="film-details__comment-info">
         <span class="film-details__comment-author">${comment.author}</span>
-        <span class="film-details__comment-day">${dayjs(comment.date).format('YYYY/MM/DD HH:mm')}</span>
+        <span class="film-details__comment-day">${dayjs().from(dayjs(comment.date))}</span>
         <button class="film-details__comment-delete" data-comment-id="${comment.id}" ${comment.isDisabled ? 'disabled' : ''}>
           ${comment.isDeleting ? 'Deleting...' : 'Delete'}
         </button>
