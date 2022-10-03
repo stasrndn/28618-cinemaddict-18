@@ -1,5 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import {isCtrlEnterPressed} from '../utils.js';
+import {isCtrlEnterPressed} from '../utils/common.js';
 import {EMOTIONS_LIST, UpdateType, UserAction} from '../const.js';
 import dayjs from 'dayjs';
 import he from 'he';
@@ -62,12 +62,12 @@ const createCommentsTitleTemplate = (comments) => (
 );
 
 /**
- * Шаблон элемента списка комментаев
+ * Шаблон элемента списка комментариев
  * @param comment
  * @returns {string}
  */
 const createCommentsListItemTemplate = (comment) => (
-  `<li class="film-details__comment">
+  `<li class="film-details__comment" data-comment-id="${comment.id}">
     <span class="film-details__comment-emoji">
       <img src="./images/emoji/${comment.emotion}.png" width="55" height="55" alt="emoji-${comment.emotion}">
     </span>
@@ -76,7 +76,9 @@ const createCommentsListItemTemplate = (comment) => (
       <p class="film-details__comment-info">
         <span class="film-details__comment-author">${comment.author}</span>
         <span class="film-details__comment-day">${dayjs(comment.date).format('YYYY/MM/DD HH:mm')}</span>
-        <button class="film-details__comment-delete" data-comment-id="${comment.id}">Delete</button>
+        <button class="film-details__comment-delete" data-comment-id="${comment.id}" ${comment.isDisabled ? 'disabled' : ''}>
+          ${comment.isDeleting ? 'Deleting...' : 'Delete'}
+        </button>
       </p>
     </div>
    </li>`
@@ -102,20 +104,24 @@ const createCommentsListTemplate = (comments) => {
 
 /**
  * Шаблон поля ввода комментария
- * @param comment
+ * @param state
  * @returns {string}
  */
-const createCommentInputTemplate = (comment) => (
-  `
+const createCommentInputTemplate = (state) => {
+  const comment = state.comment;
+  const isInputDisabled = state.isDisabled;
+
+  return (`
     <label class="film-details__comment-label">
       <textarea
         class="film-details__comment-input"
         placeholder="Select reaction below and write comment here"
         name="comment"
+        ${isInputDisabled ? 'disabled' : ''}
       >${comment ?? ''}</textarea>
     </label>
-  `
-);
+  `);
+};
 
 /**
  * Шаблон блока комментариев
@@ -126,7 +132,7 @@ const createCommentsTemplate = (state) => {
   const commentsTitleTemplate = createCommentsTitleTemplate(state.comments);
   const commentsListTemplate = createCommentsListTemplate(state.comments);
   const emojiListTemplate = createEmojiListTemplate(state.emotion);
-  const commentInputTemplate = createCommentInputTemplate(state.comment);
+  const commentInputTemplate = createCommentInputTemplate(state);
 
   return (`
     <div class="film-details__bottom-container">
@@ -134,7 +140,7 @@ const createCommentsTemplate = (state) => {
         ${commentsTitleTemplate}
         ${commentsListTemplate}
 
-        <form class="film-details__new-comment" action="" method="get">
+        <form class="film-details__new-comment" action="" method="get" ${state.isSaving ? 'disabled' : ''}>
           <div class="film-details__add-emoji-label">
             ${state.emotion ? `<img src="./images/emoji/${state.emotion}.png" width="55" height="55" alt="emoji-${state.emotion}">` : ''}
           </div>
@@ -147,6 +153,12 @@ const createCommentsTemplate = (state) => {
 };
 
 export default class CommentsView extends AbstractStatefulView {
+  /**
+   * Элемент формы отправки комментария
+   * @type {null}
+   */
+  #newCommentElement = null;
+
   constructor(comments) {
     super();
     this._state = CommentsView.parseCommentsToState(comments);
@@ -157,12 +169,33 @@ export default class CommentsView extends AbstractStatefulView {
     return createCommentsTemplate(this._state);
   }
 
+  get comments() {
+    return this._state.comments;
+  }
+
   /**
    * Добавляет обработчик изменения в представлении
    * @param callback
    */
   setHandleViewAction = (callback) => {
     this._callback.handleViewAction = callback;
+  };
+
+  /**
+   * Эффект покачивания головой у комментария
+   * @param commentId
+   */
+  shakeComment = (commentId) => {
+    const comment = this.element.querySelector(`.film-details__comment[data-comment-id="${commentId}"]`);
+    this.shake.call({element: comment});
+  };
+
+  /**
+   * Эффект покачивания головой
+   * у формы добавления комментария
+   */
+  shakeFormNewComment = () => {
+    this.shake.call({element: this.#newCommentElement});
   };
 
   _restoreHandlers = () => {
@@ -193,8 +226,8 @@ export default class CommentsView extends AbstractStatefulView {
    * изменение эмоций
    */
   #handleEmojiItems = () => {
-    const newCommentElement = this.element.querySelector('.film-details__new-comment');
-    const emojiItems = newCommentElement.querySelectorAll('.film-details__emoji-item');
+    this.#newCommentElement = this.element.querySelector('.film-details__new-comment');
+    const emojiItems = this.#newCommentElement?.querySelectorAll('.film-details__emoji-item');
 
     emojiItems.forEach((item) => {
       item.addEventListener('change', this.#handleEmojiItemChange);
@@ -276,9 +309,15 @@ export default class CommentsView extends AbstractStatefulView {
    * @returns {{comments}}
    */
   static parseCommentsToState = (comments) => ({
-    comments: comments,
+    comments: comments.map((comment) => ({
+      ...comment,
+      isDeleting: false,
+      isDisabled: false,
+    })),
     emotion: null,
     comment: null,
+    isSaving: false,
+    isDisabled: false,
   });
 
   /**

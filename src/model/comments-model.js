@@ -1,5 +1,5 @@
 import Observable from '../framework/observable.js';
-import {UpdateType} from '../const';
+import {UpdateType} from '../const.js';
 
 /**
  * Модель рыба для комментариев к фильмам
@@ -40,9 +40,10 @@ export default class CommentsModel extends Observable {
       const film = update.film;
       delete update.film;
 
-      const newComment = await this.#apiService.addComment(update, film);
-      this._notify(updateType, newComment);
-    } catch {
+      const {comments} = await this.#apiService.addComment(update, film);
+      this.#comments = comments;
+      this._notify(updateType, comments);
+    } catch (e) {
       throw new Error('Can\'t add comment');
     }
   };

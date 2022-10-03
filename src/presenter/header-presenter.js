@@ -11,14 +11,9 @@ export default class HeaderPresenter {
   #headerContainer = null;
 
   /**
-   * Модели данных
-   * @type {{filmsModel: null, filterModel: null, commentsModel: null}}
+   * Модель данных фильмов
    */
-  #models = {
-    filmsModel: null,
-    filterModel: null,
-    commentsModel: null,
-  };
+  #filmsModel = null;
 
   /**
    * Компонент профиля
@@ -29,15 +24,15 @@ export default class HeaderPresenter {
   constructor(container, models) {
     this.#headerContainer = container.querySelector('.header');
 
-    this.#models.filmsModel = models.filmsModel;
-    this.#models.filmsModel.addObserver(this.#handleModelEvent);
+    this.#filmsModel = models.filmsModel;
+    this.#filmsModel.addObserver(this.#handleModelEvent);
   }
 
   /**
    * Инициализация презентера
    */
   init = () => {
-    if (!this.#models.filmsModel.films.length) {
+    if (!this.#filmsModel.films.length) {
       return;
     }
 
@@ -57,7 +52,7 @@ export default class HeaderPresenter {
    * Получить количество просмотренных фильмов пользователем
    * @returns {*}
    */
-  #getCountWatchedFilms = () => filter[FilterType.HISTORY](this.#models.filmsModel.films)?.length;
+  #getCountWatchedFilms = () => filter[FilterType.HISTORY](this.#filmsModel.films)?.length;
 
   /**
    * Обработчик на изменение в модели фильмов

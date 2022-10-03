@@ -40,8 +40,8 @@ export default class FilmPresenter {
     const prevFilmComponent = this.#filmComponent;
 
     this.#filmComponent = new FilmView(film);
-    this.#filmComponent.setHandleFilmClick(this.#handleFilmClick);
-    this.#filmComponent.setHandleViewAction(this.#handleViewAction);
+    this.#filmComponent?.setHandleFilmClick(this.#handleFilmClick);
+    this.#filmComponent?.setHandleViewAction(this.#handleViewAction);
 
     if (prevFilmComponent === null) {
       render(this.#filmComponent, this.#filmsListContainer);
@@ -50,6 +50,13 @@ export default class FilmPresenter {
 
     replace(this.#filmComponent, prevFilmComponent);
     remove(prevFilmComponent);
+  };
+
+  /**
+   * Эффект потряхивания компонента
+   */
+  shakeControls = () => {
+    this.#filmComponent?.shakeControls();
   };
 
   /**

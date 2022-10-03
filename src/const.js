@@ -10,6 +10,16 @@ const FilterType = {
 };
 
 /**
+ * Сообщения при пустом фильтре
+ * @type {{}}
+ */
+const FilterEmptyMessages = {
+  [FilterType.WATCHLIST]: 'There are no movies to watch now',
+  [FilterType.HISTORY]: 'There are no watched movies now',
+  [FilterType.FAVORITES]: 'There are no favorite movies now',
+};
+
+/**
  * Тип сортировки списка
  * @type {{DATE: string, RATING: string, DEFAULT: string}}
  */
@@ -93,37 +103,11 @@ const UserType = {
 };
 
 /**
- * Максимальное количество фильмов,
- * отдаваемых моделью
- * @type {number}
- */
-const MAX_FILMS_COUNT = 22;
-
-/**
- * Максимальное количество комментариев,
- * отдаваемых моделью
- * @type {number}
- */
-const MAX_COMMENTS_COUNT = 25;
-
-/**
- * Максимальное количество комментариев у фильмов
- * @type {number}
- */
-const MAX_FILM_COMMENT_COUNT = 11;
-
-/**
  * Максимальное количество символов описания
  * в карточке фильма
  * @type {number}
  */
 const MAX_LENGTH_DESCRIPTION_FILM = 139;
-
-/**
- * Нырнуть в прошлое максимум на 5 лет
- * @type {number}
- */
-const MAX_PAST_COMMENT_YEAR = 5;
 
 /**
  * Наименование клавиши Escape
@@ -175,13 +159,10 @@ const FILM_COUNT_PER_STEP = 5;
 
 export {
   FilterType,
+  FilterEmptyMessages,
   SortType,
   SORT_TYPES,
-  MAX_FILMS_COUNT,
-  MAX_COMMENTS_COUNT,
-  MAX_FILM_COMMENT_COUNT,
   MAX_LENGTH_DESCRIPTION_FILM,
-  MAX_PAST_COMMENT_YEAR,
   ESCAPE_KEY,
   ENTER_KEY,
   TAG_HREF,

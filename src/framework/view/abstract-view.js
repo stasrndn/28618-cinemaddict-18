@@ -4,6 +4,9 @@ import './abstract-view.css';
 /** @const {string} Класс, реализующий эффект "покачивания головой" */
 const SHAKE_CLASS_NAME = 'shake';
 
+/** @const {string} Класс, реализующий эффект "покачивания головой" */
+const SHAKE_ABSOLUTE_CLASS_NAME = 'shake-absolute';
+
 /** @const {number} Время анимации в миллисекундах */
 const SHAKE_ANIMATION_TIMEOUT = 600;
 
@@ -57,6 +60,18 @@ export default class AbstractView {
     this.element.classList.add(SHAKE_CLASS_NAME);
     setTimeout(() => {
       this.element.classList.remove(SHAKE_CLASS_NAME);
+      callback?.();
+    }, SHAKE_ANIMATION_TIMEOUT);
+  }
+
+  /**
+   * Метод, реализующий эффект "покачивания головой"
+   * @param {shakeCallback} [callback] Функция, которая будет вызвана после завершения анимации
+   */
+  shakeAbsolute(callback) {
+    this.element.classList.add(SHAKE_ABSOLUTE_CLASS_NAME);
+    setTimeout(() => {
+      this.element.classList.remove(SHAKE_ABSOLUTE_CLASS_NAME);
       callback?.();
     }, SHAKE_ANIMATION_TIMEOUT);
   }

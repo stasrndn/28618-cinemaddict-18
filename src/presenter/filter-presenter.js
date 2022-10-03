@@ -11,13 +11,12 @@ export default class FilterPresenter {
   #container = null;
 
   /**
-   * Модели данных
-   * @type {{filmsModel: null, filterModel: null, commentsModel: null}}
+   * Модели данных фильмов и фильтра
+   * @type {{filmsModel: null, filterModel: null}}
    */
   #models = {
     filmsModel: null,
     filterModel: null,
-    commentsModel: null,
   };
 
   /**
@@ -74,7 +73,7 @@ export default class FilterPresenter {
     const prevFilterComponent = this.#filterComponent;
 
     this.#filterComponent = new FilterView(filters, this.#models.filterModel.filter);
-    this.#filterComponent.setFilterTypeClickHandler(this.#handleFilterTypeClick);
+    this.#filterComponent?.setFilterTypeClickHandler(this.#handleFilterTypeClick);
 
     if (prevFilterComponent === null) {
       render(this.#filterComponent, this.#container);

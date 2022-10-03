@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import {SORT_TYPES} from '../const.js';
-import {isLinkClicked} from '../utils.js';
+import {isLinkClicked} from '../utils/common.js';
 
 /**
  * Формирование разметки пункта сортировки

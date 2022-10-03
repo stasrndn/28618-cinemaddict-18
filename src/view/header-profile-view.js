@@ -1,5 +1,5 @@
-import {getUserType} from '../utils/user.js';
 import AbstractView from '../framework/view/abstract-view.js';
+import {getUserType} from '../utils/user.js';
 
 const createHeaderProfileTemplate = (userType) => (
   `<section class="header__profile profile">

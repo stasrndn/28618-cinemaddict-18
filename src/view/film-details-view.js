@@ -279,6 +279,14 @@ export default class FilmDetailsView extends AbstractStatefulView {
     this._callback.filmDetailDeleteHandler = callback;
   };
 
+  /**
+   * Потрусить панель управления
+   */
+  shakeControls = () => {
+    const controlsPanel = this.element.querySelector('.film-details__controls');
+    this.shake.call({element: controlsPanel});
+  };
+
   updateData = (film) => {
     this.#freezeCurrentPosition();
     this.updateElement(FilmDetailsView.parseFilmToState(film));
