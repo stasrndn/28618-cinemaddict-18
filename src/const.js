@@ -103,37 +103,11 @@ const UserType = {
 };
 
 /**
- * Максимальное количество фильмов,
- * отдаваемых моделью
- * @type {number}
- */
-const MAX_FILMS_COUNT = 22;
-
-/**
- * Максимальное количество комментариев,
- * отдаваемых моделью
- * @type {number}
- */
-const MAX_COMMENTS_COUNT = 25;
-
-/**
- * Максимальное количество комментариев у фильмов
- * @type {number}
- */
-const MAX_FILM_COMMENT_COUNT = 11;
-
-/**
  * Максимальное количество символов описания
  * в карточке фильма
  * @type {number}
  */
 const MAX_LENGTH_DESCRIPTION_FILM = 139;
-
-/**
- * Нырнуть в прошлое максимум на 5 лет
- * @type {number}
- */
-const MAX_PAST_COMMENT_YEAR = 5;
 
 /**
  * Наименование клавиши Escape
@@ -183,23 +157,12 @@ const ID_SIZE = 10;
  */
 const FILM_COUNT_PER_STEP = 5;
 
-/**
- * Название кнопки во время удаления комментария
- * @type {string}
- */
-const DELETE_COMMENT_BUTTON_TEXT = 'Deleting...';
-
 export {
   FilterType,
   FilterEmptyMessages,
   SortType,
   SORT_TYPES,
-  MAX_FILMS_COUNT,
-  MAX_COMMENTS_COUNT,
-  MAX_FILM_COMMENT_COUNT,
   MAX_LENGTH_DESCRIPTION_FILM,
-  MAX_PAST_COMMENT_YEAR,
-  DELETE_COMMENT_BUTTON_TEXT,
   ESCAPE_KEY,
   ENTER_KEY,
   TAG_HREF,

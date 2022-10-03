@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import {isFilterItemClick} from '../utils.js';
-import {getFilterType} from '../utils/filter';
+import {isFilterItemClick} from '../utils/common.js';
+import {getFilterType} from '../utils/filter.js';
 
 /**
  * Формирует шаблон элемента фильтра

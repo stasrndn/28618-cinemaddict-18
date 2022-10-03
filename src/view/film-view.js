@@ -1,7 +1,7 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {isAlreadyWatched, isFavorite, isWatchlist} from '../utils/film.js';
 import {MAX_LENGTH_DESCRIPTION_FILM, UpdateType, UserAction} from '../const.js';
-import {isControlButton} from '../utils.js';
+import {isControlButton} from '../utils/common.js';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 dayjs.extend(duration);
@@ -124,7 +124,7 @@ export default class FilmView extends AbstractStatefulView {
   };
 
   /**
-   * Установитб обработчик изменения фильма
+   * Установить обработчик изменения фильма
    * @param callback
    */
   setHandleViewAction = (callback) => {

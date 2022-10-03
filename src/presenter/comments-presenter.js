@@ -38,12 +38,12 @@ export default class CommentsPresenter {
     this.#commentsModel = commentsModel;
     this.#uiBlocker = uiBlocker;
 
-    this.#commentsModel.addObserver(this.#handleCommentsModelEvent);
+    this.#commentsModel?.addObserver(this.#handleCommentsModelEvent);
   }
 
   init = (film) => {
     this.#film = film;
-    this.#commentsModel.init(film);
+    this.#commentsModel?.init(film);
   };
 
   /**
@@ -60,8 +60,8 @@ export default class CommentsPresenter {
    * @param id
    */
   setDeleting = (id) => {
-    this.#commentsComponent.updateElement({
-      comments: this.#commentsComponent.comments.map((comment) => {
+    this.#commentsComponent?.updateElement({
+      comments: this.#commentsComponent?.comments.map((comment) => {
         if (id === comment.id) {
           return {
             ...comment,
@@ -79,8 +79,8 @@ export default class CommentsPresenter {
    * @param id
    */
   setAborting = (id) => {
-    this.#commentsComponent.updateElement({
-      comments: this.#commentsComponent.comments.map((comment) => {
+    this.#commentsComponent?.updateElement({
+      comments: this.#commentsComponent?.comments.map((comment) => {
         if (id === comment.id) {
           return {
             ...comment,
@@ -92,14 +92,14 @@ export default class CommentsPresenter {
       })
     });
 
-    this.#commentsComponent.shakeComment(id);
+    this.#commentsComponent?.shakeComment(id);
   };
 
   /**
    * Установить статус отправления комментария
    */
   setAdding = () => {
-    this.#commentsComponent.updateElement({
+    this.#commentsComponent?.updateElement({
       isSaving: true,
       isDisabled: true,
     });
@@ -109,12 +109,12 @@ export default class CommentsPresenter {
    * Удаления статуса отправления нового комментария
    */
   setAddingAborting = () => {
-    this.#commentsComponent.updateElement({
+    this.#commentsComponent?.updateElement({
       isSaving: false,
       isDisabled: false,
     });
 
-    this.#commentsComponent.shakeFormNewComment();
+    this.#commentsComponent?.shakeFormNewComment();
   };
 
   /**
@@ -124,7 +124,7 @@ export default class CommentsPresenter {
   #renderCommentsComponent = (comments) => {
     const prevCommentsComponent = this.#commentsComponent;
     this.#commentsComponent = new CommentsView(comments);
-    this.#commentsComponent.setHandleViewAction(this.#handleViewAction);
+    this.#commentsComponent?.setHandleViewAction(this.#handleViewAction);
 
     if (prevCommentsComponent === null) {
       render(this.#commentsComponent, this.#popupContainer);
@@ -136,13 +136,13 @@ export default class CommentsPresenter {
   };
 
   #handleViewAction = async (actionType, updateType, update) => {
-    this.#uiBlocker.block();
+    this.#uiBlocker?.block();
 
     switch (actionType) {
       case UserAction.DELETE_COMMENT:
         try {
           this.setDeleting(update.id);
-          await this.#commentsModel.deleteComment(updateType, update);
+          await this.#commentsModel?.deleteComment(updateType, update);
         } catch (e) {
           this.setAborting(update.id);
         }
@@ -151,14 +151,14 @@ export default class CommentsPresenter {
         try {
           this.setAdding();
           update.film = this.#film;
-          await this.#commentsModel.addComment(updateType, update);
+          await this.#commentsModel?.addComment(updateType, update);
         } catch (e) {
           this.setAddingAborting();
         }
         break;
     }
 
-    this.#uiBlocker.unblock();
+    this.#uiBlocker?.unblock();
   };
 
   /**

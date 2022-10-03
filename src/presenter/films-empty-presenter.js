@@ -9,22 +9,18 @@ export default class FilmsEmptyPresenter {
   #container = null;
 
   /**
-   * Модели данных
-   * @type {{filmsModel: null, filterModel: null, commentsModel: null}}
+   * Модель данных фильмов
+   * @type {null}
    */
-  #models = {
-    filmsModel: null,
-    filterModel: null,
-    commentsModel: null,
-  };
+  #filmsModel = null;
 
   constructor(container, models) {
     this.#container = container;
-    this.#models.filmsModel = models.filmsModel;
+    this.#filmsModel = models.filmsModel;
   }
 
   init = () => {
-    const filmsCount = this.#models.filmsModel.films.length;
+    const filmsCount = this.#filmsModel?.films.length;
 
     if (filmsCount) {
       return;

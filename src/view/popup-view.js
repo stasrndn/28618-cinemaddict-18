@@ -34,13 +34,13 @@ export default class PopupView extends AbstractView {
   }
 
   init = () => {
-    this.#bodyContainer.addEventListener('keydown', this.#handleEscapeKeyDown);
-    this.#bodyContainer.classList.add('hide-overflow');
+    this.#bodyContainer?.addEventListener('keydown', this.#handleEscapeKeyDown);
+    this.#bodyContainer?.classList.add('hide-overflow');
   };
 
   destroy = () => {
-    this.#bodyContainer.querySelector('.film-details').remove();
-    this.#bodyContainer.classList.remove('hide-overflow');
-    this.#bodyContainer.removeEventListener('keydown', this.#handleEscapeKeyDown);
+    this.#bodyContainer?.querySelector('.film-details').remove();
+    this.#bodyContainer?.classList.remove('hide-overflow');
+    this.#bodyContainer?.removeEventListener('keydown', this.#handleEscapeKeyDown);
   };
 }

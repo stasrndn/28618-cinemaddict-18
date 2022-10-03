@@ -9,14 +9,10 @@ export default class FooterPresenter {
   #footerContainer = null;
 
   /**
-   * Модели данных
-   * @type {{filmsModel: null, filterModel: null, commentsModel: null}}
+   * Модель данных фильмов
+   * @type {null}
    */
-  #models = {
-    filmsModel: null,
-    filterModel: null,
-    commentsModel: null,
-  };
+  #filmsModel = null;
 
   /**
    * Компонент со статистикой по фильмам
@@ -27,15 +23,15 @@ export default class FooterPresenter {
   constructor(container, models) {
     this.#footerContainer = container.querySelector('.footer');
 
-    this.#models.filmsModel = models.filmsModel;
-    this.#models.filmsModel.addObserver(this.#handleModelEvent);
+    this.#filmsModel = models.filmsModel;
+    this.#filmsModel?.addObserver(this.#handleModelEvent);
   }
 
   /**
    * Инициализация презентера
    */
   init = () => {
-    const filmsCount = this.#models.filmsModel.films.length;
+    const filmsCount = this.#filmsModel?.films.length;
     const prevFooterStatisticsComponent = this.#footerStatisticsComponent;
 
     this.#footerStatisticsComponent = new FooterStatisticsView(filmsCount);

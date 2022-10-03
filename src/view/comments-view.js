@@ -1,5 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import {isCtrlEnterPressed} from '../utils.js';
+import {isCtrlEnterPressed} from '../utils/common.js';
 import {EMOTIONS_LIST, UpdateType, UserAction} from '../const.js';
 import dayjs from 'dayjs';
 import he from 'he';
@@ -62,7 +62,7 @@ const createCommentsTitleTemplate = (comments) => (
 );
 
 /**
- * Шаблон элемента списка комментаев
+ * Шаблон элемента списка комментариев
  * @param comment
  * @returns {string}
  */
@@ -227,7 +227,7 @@ export default class CommentsView extends AbstractStatefulView {
    */
   #handleEmojiItems = () => {
     this.#newCommentElement = this.element.querySelector('.film-details__new-comment');
-    const emojiItems = this.#newCommentElement.querySelectorAll('.film-details__emoji-item');
+    const emojiItems = this.#newCommentElement?.querySelectorAll('.film-details__emoji-item');
 
     emojiItems.forEach((item) => {
       item.addEventListener('change', this.#handleEmojiItemChange);

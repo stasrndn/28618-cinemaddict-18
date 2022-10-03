@@ -1,5 +1,5 @@
 import Observable from '../framework/observable.js';
-import {UpdateType} from '../const';
+import {UpdateType} from '../const.js';
 
 /**
  * Модель рыба для комментариев к фильмам

@@ -1,5 +1,10 @@
+import {FILM_COUNT_PER_STEP, FilterEmptyMessages, FilterType, SortType, UpdateType, UserAction} from '../const.js';
+import {filter} from '../utils/filter.js';
+import {sortByDateRelease, sortByRating} from '../utils/film.js';
+import {isEscapeKey} from '../utils/common.js';
+
 import FilmPresenter from './film-presenter.js';
-import FilmDetailPresenter from './film-detail-presenter';
+import FilmDetailPresenter from './film-detail-presenter.js';
 import CommentsPresenter from './comments-presenter.js';
 
 import FilmsView from '../view/films-view.js';
@@ -10,12 +15,7 @@ import FilmsListContainerView from '../view/films-list-container-view.js';
 import SortView from '../view/sort-view.js';
 import LoadMoreButtonView from '../view/load-more-button-view.js';
 
-import {FILM_COUNT_PER_STEP, FilterEmptyMessages, FilterType, SortType, UpdateType, UserAction} from '../const.js';
-import {filter} from '../utils/filter.js';
-import {sortByDateRelease, sortByRating} from '../utils/film.js';
 import {remove, render} from '../framework/render.js';
-import {isEscapeKey} from '../utils';
-
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 
 export default class FilmsListPresenter {
@@ -174,9 +174,9 @@ export default class FilmsListPresenter {
    */
   #renderSort = () => {
     this.#sortComponent = new SortView(this.#currentSortType);
-    this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
+    this.#sortComponent?.setSortTypeChangeHandler(this.#handleSortTypeChange);
 
-    render(this.#sortComponent, this.#boardComponent.element);
+    render(this.#sortComponent, this.#boardComponent?.element);
   };
 
   /**
@@ -216,7 +216,7 @@ export default class FilmsListPresenter {
    */
   #renderLoadMoreButton = () => {
     this.#loadMoreButtonComponent = new LoadMoreButtonView();
-    this.#loadMoreButtonComponent.setClickHandler(this.#handleLoadMoreButtonClick);
+    this.#loadMoreButtonComponent?.setClickHandler(this.#handleLoadMoreButtonClick);
 
     render(this.#loadMoreButtonComponent, this.#filmListComponent.element);
   };
@@ -316,10 +316,10 @@ export default class FilmsListPresenter {
     render(this.#popupComponent, this.#bodyContainer);
 
     this.#filmDetailPresenter = new FilmDetailPresenter(this.#popupComponent.innerContainer, this.#handleViewAction, this.#clearPopup);
-    this.#filmDetailPresenter.init(this.#selectedFilm, this.#models);
+    this.#filmDetailPresenter?.init(this.#selectedFilm, this.#models.filmsModel);
 
     this.#commentsPresenter = new CommentsPresenter(this.#popupComponent.innerContainer, this.#models.commentsModel, this.#uiBlocker);
-    this.#commentsPresenter.init(this.#selectedFilm);
+    this.#commentsPresenter?.init(this.#selectedFilm);
   };
 
   /**
@@ -327,10 +327,10 @@ export default class FilmsListPresenter {
    */
   #clearPopup = () => {
     if (this.#filmDetailPresenter !== null) {
-      this.#filmDetailPresenter.destroy();
+      this.#filmDetailPresenter?.destroy();
       this.#filmDetailPresenter = null;
 
-      this.#commentsPresenter.destroy();
+      this.#commentsPresenter?.destroy();
       this.#commentsPresenter = null;
 
       this.#popupComponent.destroy();
@@ -383,7 +383,7 @@ export default class FilmsListPresenter {
     this.#renderSort();
 
     render(this.#boardComponent, this.#boardContainer);
-    render(this.#filmListComponent, this.#boardComponent.element);
+    render(this.#filmListComponent, this.#boardComponent?.element);
     render(this.#filmListTitleComponent, this.#filmListComponent.element);
     render(this.#filmListContainerComponent, this.#filmListComponent.element);
 
