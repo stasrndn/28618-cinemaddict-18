@@ -10,7 +10,7 @@ import FilmsListContainerView from '../view/films-list-container-view.js';
 import SortView from '../view/sort-view.js';
 import LoadMoreButtonView from '../view/load-more-button-view.js';
 
-import {FILM_COUNT_PER_STEP, FilterType, SortType, UpdateType, UserAction} from '../const.js';
+import {FILM_COUNT_PER_STEP, FilterEmptyMessages, FilterType, SortType, UpdateType, UserAction} from '../const.js';
 import {filter} from '../utils/filter.js';
 import {sortByDateRelease, sortByRating} from '../utils/film.js';
 import {remove, render} from '../framework/render.js';
@@ -53,13 +53,13 @@ export default class FilmsListPresenter {
    * Компонент заголовка списка фильмов
    * @type {FilmsListTitleView}
    */
-  #filmListTitleComponent = new FilmsListTitleView(true, 'All movies. Upcoming');
+  #filmListTitleComponent = null;
 
   /**
    * Компонент-контейнер для отрисовки карточек фильмов
    * @type {FilmsListContainerView}
    */
-  #filmListContainerComponent = new FilmsListContainerView();
+  #filmListContainerComponent = null;
 
   /**
    * Компонент кнопки "Показать ещё"
@@ -369,8 +369,15 @@ export default class FilmsListPresenter {
     const filmsCount = films.length;
 
     if (filmsCount === 0) {
+      this.#clearFilmListComponents();
+      this.#filmListTitleComponent = new FilmsListTitleView(false, FilterEmptyMessages[this.#filterType]);
+      render(this.#filmListTitleComponent, this.#filmListComponent.element);
       return;
     }
+
+    this.#clearFilmListComponents();
+    this.#filmListTitleComponent = new FilmsListTitleView(true, 'All movies. Upcoming');
+    this.#filmListContainerComponent = new FilmsListContainerView();
 
     this.#renderSort();
 
@@ -384,5 +391,13 @@ export default class FilmsListPresenter {
     if (filmsCount > this.#renderedFilmCount) {
       this.#renderLoadMoreButton();
     }
+  };
+
+  #clearFilmListComponents = () => {
+    remove(this.#filmListTitleComponent);
+    remove(this.#filmListContainerComponent);
+
+    this.#filmListTitleComponent = null;
+    this.#filmListContainerComponent = null;
   };
 }

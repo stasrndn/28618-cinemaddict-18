@@ -10,6 +10,16 @@ const FilterType = {
 };
 
 /**
+ * Сообщения при пустом фильтре
+ * @type {{}}
+ */
+const FilterEmptyMessages = {
+  [FilterType.WATCHLIST]: 'There are no movies to watch now',
+  [FilterType.HISTORY]: 'There are no watched movies now',
+  [FilterType.FAVORITES]: 'There are no favorite movies now',
+};
+
+/**
  * Тип сортировки списка
  * @type {{DATE: string, RATING: string, DEFAULT: string}}
  */
@@ -181,6 +191,7 @@ const DELETE_COMMENT_BUTTON_TEXT = 'Deleting...';
 
 export {
   FilterType,
+  FilterEmptyMessages,
   SortType,
   SORT_TYPES,
   MAX_FILMS_COUNT,
