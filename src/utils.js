@@ -64,7 +64,7 @@ const isControlButton = (evt) => evt.target.classList.contains('film-card__contr
  * @param evt
  * @returns {boolean}
  */
-const isCtrlEnterPressed = (evt) => evt.ctrlKey && evt.key === ENTER_KEY;
+const isCtrlEnterPressed = (evt) => ((evt.ctrlKey || evt.metaKey) && evt.key === ENTER_KEY);
 
 /**
  * Генерирует случайный идентификатор
