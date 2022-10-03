@@ -140,16 +140,11 @@ const TAG_SPAN = 'SPAN';
 const ESC_KEY = 'Esc';
 
 /**
- * Допустимые символы ID при генерации
- * @type {string}
- */
-const ID_VALID_SYMBOLS = '1234567890';
-
-/**
- * Длина генерируемого идентификатора
+ * Максимальное количество карточек фильмов,
+ * отображаемых в блоках "Top rated" и "Most commented"
  * @type {number}
  */
-const ID_SIZE = 10;
+const MAX_CARDS_COUNT_FILMS_EXTRA = 2;
 
 /**
  * Сколько фильмов отрисовать за один шаг
@@ -163,13 +158,12 @@ export {
   SortType,
   SORT_TYPES,
   MAX_LENGTH_DESCRIPTION_FILM,
+  MAX_CARDS_COUNT_FILMS_EXTRA,
   ESCAPE_KEY,
   ENTER_KEY,
   TAG_HREF,
   TAG_SPAN,
   ESC_KEY,
-  ID_VALID_SYMBOLS,
-  ID_SIZE,
   FILM_COUNT_PER_STEP,
   EMOTIONS_LIST,
   UpdateType,

@@ -176,7 +176,7 @@ export default class FilmsListPresenter {
     this.#sortComponent = new SortView(this.#currentSortType);
     this.#sortComponent?.setSortTypeChangeHandler(this.#handleSortTypeChange);
 
-    render(this.#sortComponent, this.#boardComponent?.element);
+    render(this.#sortComponent, this.#boardContainer);
   };
 
   /**
