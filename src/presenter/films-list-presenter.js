@@ -351,11 +351,9 @@ export default class FilmsListPresenter {
     remove(this.#sortComponent);
     remove(this.#loadMoreButtonComponent);
 
-    if (resetRenderedFilmCount) {
-      this.#renderedFilmCount = FILM_COUNT_PER_STEP;
-    } else {
-      this.#renderedFilmCount = Math.min(filmsCount, this.#renderedFilmCount);
-    }
+    this.#renderedFilmCount = (resetRenderedFilmCount)
+      ? FILM_COUNT_PER_STEP
+      : Math.min(filmsCount, this.#renderedFilmCount);
 
     if (resetSortType) {
       this.#currentSortType = SortType.DEFAULT;
